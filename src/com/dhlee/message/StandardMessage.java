@@ -4,51 +4,54 @@ import java.util.LinkedHashMap;
 
 public class StandardMessage extends StandardItem{
 	private static final long serialVersionUID = 8250470942348479859L;
-	static boolean debug = false;
+	static boolean debug = true;
 	public StandardMessage() {
 		this.name = "StandardRoot"; // XML 일 경우 Root name으로 사용 ?
 		this.type = 0; 
 	}
 	
+	
 	public StandardItem findItem(String path) {
-		String[] paths = path.split("[.]");
+		return findItem(path, ".", true, false);
+	}
+	
+	public StandardItem findItem(String path, String pathSeparator, boolean zeroBase, boolean createNew) {
+		String  separator = "["+ pathSeparator +"]";
+		
+		String[] paths = path.split(separator);
 		StandardItem item = null;
-//		if(paths.length ==1) {
-//			String itemName = path;
-//			int arrayIndex = StandardMessageUtil.getArrayIndex(itemName);
-//			if(arrayIndex >= 0) {
-//				itemName = StandardMessageUtil.getArrayName(itemName);
-//			}
-//			// Array는 저장된 frame을 return
-////			if(arrayIndex >= 0) {
-////				item = this.getArrayChilds(arrayIndex);
-////			}
-////			else {
-//				item = this.getChilds().get(itemName);
-////			}
-//			if(item == null) {
-//				("@WARN - Item not found : " + path);
-//				return null;
-//			}
-//			else {
-//				return item;
-//			}
-//		}
-		LinkedHashMap<String , StandardItem> childItems = this.getChilds(); 
+
+		LinkedHashMap<String , StandardItem> childItems = this.getChilds();
 		for(int i=0; i< paths.length; i++) {
 			String itemName = paths[i];
 			int arrayIndex = StandardMessageUtil.getArrayIndex(itemName);
+			
 			if(arrayIndex >= 0) {
 				itemName = StandardMessageUtil.getArrayName(itemName);
+				// if XML, use 1 base index 
+				if( !zeroBase ) {
+					arrayIndex = arrayIndex -1;
+				}
 			}
-			item = childItems.get(itemName);
+			try {
+				item = childItems.get(itemName);
+			}
+			catch(Exception ex) {
+				ex.printStackTrace();
+				debug("@ERROR - getChilds not found : this=" + item.toString());
+				debug("@ERROR - getChilds not found : itemName=" + itemName);
+			}
 			if(i< paths.length-1) {
 				if(item != null && item.getType() >1) {
 					if(arrayIndex >= 0) {
-						childItems = item.getArrayChilds(arrayIndex);
+						childItems = item.getArrayChilds(arrayIndex, createNew);
 					}
 					else {
 						childItems = item.getChilds();
+					}
+					if(childItems == null) {
+						debug("@WARN - childItems not found : " + paths[i] +" / "+ path);
+						return  null;
 					}
 				}
 				else {

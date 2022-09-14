@@ -14,15 +14,12 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 
 public class JsonReader implements StandardReader {
 	static boolean debug = true;
+	private String FIELD_SEPARATOR = ".";
+	private boolean ZERO_BASE_INDEX = true;
 	
 	public JsonReader() {
 	}
 
-	public static void main(String[] args) {
-
-	}
-	
-	// StandardMessage를 기준으로 JSON parsing
 	public StandardMessage parse(StandardMessage message, String jsonString) {
 		JsonNode jsonNode = null;
 	    ObjectMapper mapper =  null;
@@ -42,13 +39,11 @@ public class JsonReader implements StandardReader {
 			e.printStackTrace();
 		}
 		
-		ArrayList<StandardItem> list = message.toList();
-		for(int i=0; i<list.size(); i++) {
-			StandardItem item = list.get(i);
-			debug( i + " - "+ item.getLevel() + " : " +item.getName());
-		}
-		
-		
+//		ArrayList<StandardItem> list = message.toList();
+//		for(int i=0; i<list.size(); i++) {
+//			StandardItem item = list.get(i);
+//			debug( i + " - "+ item.getLevel() + " : " +item.getName());
+//		}
 //		ArrayList<StandardItem> childList = message.getChildsList();
 //		int i=0;
 //		for(StandardItem item:childList) {
@@ -59,17 +54,19 @@ public class JsonReader implements StandardReader {
 		// make json map(path, value)
 		LinkedHashMap<String, String> itemMap = new LinkedHashMap<String, String>();
 		traverse(message, jsonNode, null, itemMap);
-//		for(String key:itemMap.keySet()) {
-//			debug(key + " => " + itemMap.get(key));
-//		}
+
+		for(String key:itemMap.keySet()) {
+			debug("~ itemMap : " + key + " => " + itemMap.get(key));
+		}
 		return message;		
 	}
 	
 	public void traverse(StandardMessage item, JsonNode root, String parentName, LinkedHashMap<String, String> itemMap){
 		StandardItem currentItem = null;
+		String fieldName = null;
 		if(parentName != null) {
 			debug("$ findItem :: findItem="+ parentName);
-			currentItem = item.findItem(parentName);
+			currentItem = item.findItem(parentName, FIELD_SEPARATOR, ZERO_BASE_INDEX, true);
 			if(currentItem == null) {
 				debug("$ SKIP :: undefined path in StandardMessage node name="+ parentName);
 				return;
@@ -82,7 +79,7 @@ public class JsonReader implements StandardReader {
 	    if(root.isObject()){
 	        Iterator<String> fieldNames = root.fieldNames();
 	        while(fieldNames.hasNext()) {
-	            String fieldName = fieldNames.next();
+	            fieldName = fieldNames.next();
 	            JsonNode fieldValue = root.get(fieldName);
 	            fieldName = genPath(parentName, fieldName);
 	            traverse(item, fieldValue, fieldName, itemMap);
@@ -104,14 +101,14 @@ public class JsonReader implements StandardReader {
 		if(parent == null || parent.length() < 1) {
 			return nodeName;
 		}
-		return parent +"." + nodeName;
-	}
-	
-	public static StandardItem parse(StandardItem item, JsonNode node) {
-		return item;		
+		return parent +FIELD_SEPARATOR + nodeName;
 	}
 	
 	private static void debug(String msg) {
 		if(debug) System.out.println(msg);
 	}
+	
+//	public static void main(String[] args) {
+//	}
+
 }

@@ -13,16 +13,16 @@ public class StandardMessageUtil {
 	}
 	
 	// TODO : if Fixed Array, clone list item to length ?
-	public static StandardMessage generate(ArrayList<StandardItem> itemList) {
+	public static StandardMessage generate(ArrayList<StandardItem> itemList) throws Exception {
 		StandardMessage message = new StandardMessage();
 		Stack<StandardItem> stack = new Stack<StandardItem>();
 		int pLevel = 0;
 		int arrayIndex = 0;
 		StandardItem parent = message;
-		System.out.println("======================================================");
+//		System.out.println("======================================================");
 		for(int i=0; i< itemList.size(); i++) {
 			StandardItem item = itemList.get(i);
-			System.out.println(String.format("%03d : item - %s", i, item) );
+//			System.out.println(String.format("%03d : item - %s", i, item) );
 			// 최상위일 경우 message에 저장
 			if(item.getLevel() == 1) {
 				message.addItem(item);
@@ -41,6 +41,10 @@ public class StandardMessageUtil {
 						parent = stack.pop();
 					}
 				}
+				else {
+					throw new Exception("item level error - "+ item.getName() +" level diff=" + levelDiff);
+				}
+				
 				if(parent.getType() == StandardType.GROUP.getValue()) {
 //					System.out.println("add group child item - " + item);
 					parent.addItem(item);
@@ -49,7 +53,7 @@ public class StandardMessageUtil {
 					parent.addArrayItem(0, item);
 				}
 				else {
-					System.out.println("@ERROR item parent is not GROUP/ARRAY : item - " + item);
+					throw new Exception("item parent is not GROUP/ARRAY : item - " + item);
 				}
 			}
 			
@@ -64,6 +68,10 @@ public class StandardMessageUtil {
 
 	public static int getArrayIndex(String path) {
 		int index = -1;
+		
+		if(path.charAt(path.length()-1) != ']') {
+			return index;
+		}
 		int start = path.indexOf("[");
 		if(start > 0) {
 			String p = path.substring(start + 1, path.length()-1);
@@ -78,6 +86,9 @@ public class StandardMessageUtil {
 	}
 	
 	public static String getArrayName(String path) {
+		if(path.charAt(path.length()-1) != ']') {
+			return path;
+		}
 		int start = path.indexOf("[");
 		if(start > 0) {
 			String p = path.substring(0, start);
@@ -91,5 +102,7 @@ public class StandardMessageUtil {
 	public static void main(String[] args) {
 		System.out.println(getArrayIndex("group[10]"));
 		System.out.println(getArrayName("group[10]"));
+		System.out.println(getArrayIndex("group"));
+		System.out.println(getArrayName("group"));
 	}
 }
