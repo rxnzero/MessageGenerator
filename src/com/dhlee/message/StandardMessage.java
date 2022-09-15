@@ -5,11 +5,20 @@ import java.util.LinkedHashMap;
 public class StandardMessage extends StandardItem{
 	private static final long serialVersionUID = 8250470942348479859L;
 	static boolean debug = true;
+	
+	int readPosition = 0;
+	
 	public StandardMessage() {
 		this.name = "StandardRoot"; // XML 일 경우 Root name으로 사용 ?
 		this.type = 0; 
 	}
 	
+	public int getReadPosition() {
+		return readPosition;
+	}
+	public void setReadPosition(int readPosition) {
+		this.readPosition = readPosition;
+	}
 	
 	public StandardItem findItem(String path) {
 		return findItem(path, ".", true, false);

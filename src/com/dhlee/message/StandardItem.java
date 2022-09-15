@@ -1,6 +1,7 @@
 package com.dhlee.message;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -11,6 +12,9 @@ public class StandardItem  implements Serializable, Cloneable {
 	private static final long serialVersionUID = -4430144517271735912L;
 	LinkedHashMap<String , StandardItem> childs = new LinkedHashMap<String , StandardItem>();
 	ArrayList<LinkedHashMap<String , StandardItem>> list = new ArrayList<LinkedHashMap<String , StandardItem>>();
+
+	// FIX-ME : check encoding
+	String encode = "euc-kr";
 	
 	String name;
 	int level; // 0 : root  ~ n
@@ -19,6 +23,7 @@ public class StandardItem  implements Serializable, Cloneable {
 	int length;
 	int dataType; // 0: String, 1: Number
 	String value;
+	byte[] bytesValue = null;
 	
 	public StandardItem() {
 //		childs = new LinkedHashMap<String , StandardItem>();
@@ -170,6 +175,24 @@ public class StandardItem  implements Serializable, Cloneable {
 	}
 	public void setValue(String value) {
 		this.value = value;
+		try {
+			this.bytesValue = value.getBytes(encode);
+		} catch (UnsupportedEncodingException e) {
+			this.bytesValue = value.getBytes();
+		}
+	}
+	
+	public byte[] getBytesValue() {
+		return bytesValue;
+	}
+	
+	public void setBytesValue(byte[] bytesValue) {
+		this.bytesValue = bytesValue;
+		try {
+			this.value = new String(bytesValue, encode);
+		} catch (UnsupportedEncodingException e) {
+			this.value = new String(bytesValue);
+		}
 	}
 	
 	private String getLevelIndent() {
