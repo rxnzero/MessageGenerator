@@ -50,7 +50,7 @@ public class XmlReader implements StandardReader {
 		return message;		
 	}
 	
-	public void traverse(StandardMessage item, org.dom4j.Element root, String parentName, LinkedHashMap<String, String> itemMap){
+	private void traverse(StandardMessage item, org.dom4j.Element root, String parentName, LinkedHashMap<String, String> itemMap){
 		StandardItem currentItem = null;
 		String fullPath = null;
 		String fieldName = null;
@@ -100,7 +100,7 @@ public class XmlReader implements StandardReader {
 		}
 	}
     
-	public String genPath(String parent, String nodeName) {
+	private String genPath(String parent, String nodeName) {
 		if(parent == null || parent.length() < 1) {
 			return nodeName;
 		}

@@ -431,7 +431,6 @@ public class StandardItem  implements Serializable, Cloneable {
 	public String toXML(String encode, boolean showPretty) {
 		StringBuilder sb = new StringBuilder();
 		if(type ==0) {
-			
 			sb.append("<?xml version=\"1.0\" encoding=\""+encode+"\"?>");
 			if(showPretty) sb.append("\n");
 			

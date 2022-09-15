@@ -61,7 +61,7 @@ public class JsonReader implements StandardReader {
 		return message;		
 	}
 	
-	public void traverse(StandardMessage item, JsonNode root, String parentName, LinkedHashMap<String, String> itemMap){
+	private void traverse(StandardMessage item, JsonNode root, String parentName, LinkedHashMap<String, String> itemMap){
 		StandardItem currentItem = null;
 		String fieldName = null;
 		if(parentName != null) {
@@ -97,7 +97,7 @@ public class JsonReader implements StandardReader {
 	    }
 	}
 
-	public String genPath(String parent, String nodeName) {
+	private String genPath(String parent, String nodeName) {
 		if(parent == null || parent.length() < 1) {
 			return nodeName;
 		}

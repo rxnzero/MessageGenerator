@@ -47,7 +47,7 @@ public class FlatReader implements StandardReader {
 		return message;		
 	}
 	
-	public void traverse(StandardMessage message, StandardItem currentItem, byte[] srcbytes, String parentName, LinkedHashMap<String, String> itemMap){
+	private void traverse(StandardMessage message, StandardItem currentItem, byte[] srcbytes, String parentName, LinkedHashMap<String, String> itemMap){
 		String fieldName = null;
 		fieldName = genPath(parentName, currentItem.getName());
 		int type = currentItem.getType();
@@ -101,14 +101,14 @@ public class FlatReader implements StandardReader {
 		if(debug) System.out.println(msg);
 	}
 	
-	public String genPath(String parent, String nodeName) {
+	private String genPath(String parent, String nodeName) {
 		if(parent == null || parent.length() < 1) {
 			return nodeName;
 		}
 		return parent + FIELD_SEPARATOR + nodeName;
 	}
 	
-	public static byte[] cut(String fieldName, byte[] srcBytes, int start, int length) {
+	private static byte[] cut(String fieldName, byte[] srcBytes, int start, int length) {
         if (srcBytes == null) {
             return null;
         }
