@@ -302,6 +302,7 @@ public class SrandardMessageTest {
 		System.out.println(">> message.toPrettyJson()=\n" + message.toPrettyJson());
 		System.out.println(">> message.toXML()=\n" + message.toXML());
 		System.out.println(">> message.toPrettyXML()=\n" + message.toPrettyXML());
+		System.out.println(">> message.toByteArray()=\n[" + new String(message.toByteArray()) +"]");
 		// Test getter after parsing
 		System.out.println("\n>> ----------------------------------------------------------------------------------");
 		String findItem = null;
@@ -314,6 +315,20 @@ public class SrandardMessageTest {
 		System.out.println(findItem + " => " +message.findItemValue(findItem));		
 		findItem = "Array[2].Group[1].gitem1";
 		System.out.println(findItem + " => " +message.findItemValue(findItem));
+		
+		System.out.println(">> Test getter after parsing");
+		findItem = "Array[0].Group[0]";
+		StandardItem item = message.findItem(findItem);
+		if(item == null) {
+			System.out.println(findItem + " NOT FOUND!");
+		}
+		else {
+			System.out.println("toCSVString=\n" + item.toCSVString());
+			System.out.println("toString=\n" + item.toString());
+			System.out.println("toJson=\n" + item.toJson());
+			System.out.println("toXML=\n" + item.toXML());
+			System.out.println("toByteArray=\n[" + new String(item.toByteArray()) + "]" );
+		}
 	}
 	
 	public static void testSimple() {
@@ -377,36 +392,50 @@ public class SrandardMessageTest {
 			System.out.printf("path[%d]=(%s)\n", index++, p);
 		}
 	}
-	public static void main(String[] args) {
+	
+	public static void testDymamic( int caseNumber) {
+		String testString = null; 
+		
+		if( caseNumber == 1) {
+			testString ="000000000100000000020000000003KB100000000210000000022000000011100000001120000000113000000021100000002120000000213000000031100000003120000000313";
+			try {
+				testDynamicReader("com.dhlee.message.FlatReader", testString);
+			}
+			catch(Exception ex) {
+				System.out.println("success test : " + ex.toString());
+			}
+		}
+		
+		// underflow
+		if( caseNumber == 2) {
+			testString ="000000000100000000020000000003KB1000000002100000000220000000111000000011200000001130000000211000000021200000002130000000311000000031";
+			try {
+				testDynamicReader("com.dhlee.message.FlatReader", testString);
+			}
+			catch(Exception ex) {
+				System.out.println("underflow test : " + ex.toString());
+			}
+		}
+		// overflow
+		if( caseNumber == 3) {
+			testString ="000000000100000000020000000003KB100000000210000000022000000011100000001120000000113000000021100000002120000000213000000031100000003120000000313ADDED";
+			try {
+				testDynamicReader("com.dhlee.message.FlatReader", testString);
+			}
+			catch(Exception ex) {
+				System.out.println("overflow test : " + ex.toString());
+			}
+		}
+	}
+	
+	public static void main(String[] args) throws Exception {
 //		testSimple();
 //		testJsonReader();
 //		testDynamicReader("com.dhlee.message.JsonReader", jsonString);
 //		testXmlReader();
 //		testDynamicReader("com.dhlee.message.XmlReader", xmlString);
 		
-		String testString ="000000000100000000020000000003KB100000000210000000022000000011100000001120000000113000000021100000002120000000213000000031100000003120000000313";
-		try {
-			testDynamicReader("com.dhlee.message.FlatReader", testString);
-		}
-		catch(Exception ex) {
-			System.out.println("success test : " + ex.toString());
-		}
-		// underflow
-		testString ="000000000100000000020000000003KB1000000002100000000220000000111000000011200000001130000000211000000021200000002130000000311000000031";
-		try {
-			testDynamicReader("com.dhlee.message.FlatReader", testString);
-		}
-		catch(Exception ex) {
-			System.out.println("underflow test : " + ex.toString());
-		}
-		// overflow
-		testString ="000000000100000000020000000003KB100000000210000000022000000011100000001120000000113000000021100000002120000000213000000031100000003120000000313ADDED";
-		try {
-			testDynamicReader("com.dhlee.message.FlatReader", testString);
-		}
-		catch(Exception ex) {
-			System.out.println("overflow test : " + ex.toString());
-		}
+		testDymamic(1);
 		
 		// Json Case
 //		splitTest("Array[0].Group[0].gitem2", ".");

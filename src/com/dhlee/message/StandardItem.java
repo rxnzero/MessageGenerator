@@ -1,5 +1,7 @@
 package com.dhlee.message;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ public class StandardItem  implements Serializable, Cloneable {
 	ArrayList<LinkedHashMap<String , StandardItem>> list = new ArrayList<LinkedHashMap<String , StandardItem>>();
 
 	// FIX-ME : check encoding
+	// String <-> byte[] charset
 	String encode = "euc-kr";
 	
 	String name;
@@ -521,5 +524,68 @@ public class StandardItem  implements Serializable, Cloneable {
 			}			
 		}
 		return sb.toString();
+	}
+	
+	
+	public byte[] toByteArray() {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		try {
+			if(type ==0) {
+				Iterator<String> keyIter = childs.keySet().iterator();
+				int i=0;
+				while(keyIter.hasNext()) {
+					String key = keyIter.next();
+					StandardItem item = childs.get(key);
+					bos.write(item.toByteArray());
+					i++;
+				}
+			}
+			if(type ==1) {							
+				if (getValue() == null) {
+	            	bos.write( new byte[getLength()] );	            	
+	            } else if (dataType == 0) {	            	
+	            	bos.write( ByteUtil.padding(getBytesValue(), getLength()) );
+	            } else if (dataType == 1) {
+	            	bos.write( ByteUtil.padding(getValue(), getLength(), (byte)'0', true) );
+	            } else {	            	
+	            	bos.write( ByteUtil.padding(getBytesValue(), getLength()) );
+	            }
+			}
+			else if(type ==2) {
+				Iterator<String> keyIter = childs.keySet().iterator();
+				int i=0;
+				while(keyIter.hasNext()) {
+					String key = keyIter.next();
+					StandardItem item = childs.get(key);				
+					bos.write(item.toByteArray());
+					i++;
+				}			
+			}
+			else if(type ==3) {			
+				for(int p=0; p<list.size(); p++) {					
+					LinkedHashMap<String , StandardItem> group = list.get(p);
+					Iterator<String> keyIter = group.keySet().iterator();
+					int i=0;
+					while(keyIter.hasNext()) {
+						String key = keyIter.next();
+						StandardItem item = group.get(key);
+						bos.write(item.toByteArray());
+						i++;
+					}												
+				}			
+			}
+			return bos.toByteArray();
+		} catch(Exception e) {
+    		e.printStackTrace();
+    		return new byte[0];
+    	}
+    	finally {
+    		if(bos != null)
+				try {
+					bos.close();
+				} catch (IOException e) {
+					;
+				}
+    	}
 	}
 }
