@@ -8,5 +8,6 @@ Simple Message Generator
 - Input message type : FLAT(text), XML, Json
 > XML : Element, Attribute, Group, Array   
 Json : Field, Group, Array 
-# TOOS
+# TODOs
+- read config file & Layout definition file
 - How to define biz-data element & save & get/put
