@@ -90,7 +90,7 @@ public class FlatReader implements StandardReader {
 				for(int ai = 0; ai<arraySize; ai++) {
 					 LinkedHashMap<String, StandardItem> map = currentItem.getArrayChilds(ai, true);
 					if(map == null) {
-						logger.debug("@WARN Array create failed  item path = {}",  fieldName +"[" + ai +"]");
+						logger.warn("Array create failed  item path = {}",  fieldName +"[" + ai +"]");
 						continue;
 					}
 					childList = new ArrayList<StandardItem>(map.values());

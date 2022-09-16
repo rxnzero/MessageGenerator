@@ -48,9 +48,8 @@ public class StandardMessage extends StandardItem{
 				item = childItems.get(itemName);				
 			}
 			catch(Exception ex) {
-				ex.printStackTrace();
-				logger.debug("@ERROR - getChilds not found : this=" + item.toString());
-				logger.debug("@ERROR - getChilds not found : itemName=" + itemName);
+				logger.error("get Child error : this=" + itemName, ex);		
+				return null;
 			}
 			if(i< paths.length-1) {
 				if(item != null && item.getType() >StandardType.FIELD) {
@@ -61,18 +60,18 @@ public class StandardMessage extends StandardItem{
 						childItems = item.getChilds();
 					}
 					if(childItems == null) {
-						logger.debug("@WARN - childItems not found : " + paths[i] +" / "+ path);
+						logger.warn("childItems not found : " + paths[i] +" / "+ path);
 						return  null;
 					}
 				}
 				else {
-					logger.debug("@WARN - group not found : " + paths[i] +" / "+ path);
+					logger.warn("group not found : " + paths[i] +" / "+ path);
 					return null;
 				}
 			}			
 		}
 		if(item == null) {
-			logger.debug("@WARN - Item not found : " + path);
+			logger.warn("Item not found : " + path);
 			return null;
 		}
 		else {
