@@ -2,10 +2,12 @@ package com.dhlee.message;
 
 import java.util.LinkedHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class StandardMessage extends StandardItem{
 	private static final long serialVersionUID = 8250470942348479859L;
-	static boolean debug = true;
-	
+	static Logger logger = LoggerFactory.getLogger(StandardMessage.class);
 	int readPosition = 0;
 	
 	public StandardMessage() {
@@ -47,11 +49,11 @@ public class StandardMessage extends StandardItem{
 			}
 			catch(Exception ex) {
 				ex.printStackTrace();
-				debug("@ERROR - getChilds not found : this=" + item.toString());
-				debug("@ERROR - getChilds not found : itemName=" + itemName);
+				logger.debug("@ERROR - getChilds not found : this=" + item.toString());
+				logger.debug("@ERROR - getChilds not found : itemName=" + itemName);
 			}
 			if(i< paths.length-1) {
-				if(item != null && item.getType() >StandardType.FIELD.getValue()) {
+				if(item != null && item.getType() >StandardType.FIELD) {
 					if(arrayIndex >= 0) {
 						childItems = item.getArrayChilds(arrayIndex, createNew);
 					}
@@ -59,18 +61,18 @@ public class StandardMessage extends StandardItem{
 						childItems = item.getChilds();
 					}
 					if(childItems == null) {
-						debug("@WARN - childItems not found : " + paths[i] +" / "+ path);
+						logger.debug("@WARN - childItems not found : " + paths[i] +" / "+ path);
 						return  null;
 					}
 				}
 				else {
-					debug("@WARN - group not found : " + paths[i] +" / "+ path);
+					logger.debug("@WARN - group not found : " + paths[i] +" / "+ path);
 					return null;
 				}
 			}			
 		}
 		if(item == null) {
-			debug("@WARN - Item not found : " + path);
+			logger.debug("@WARN - Item not found : " + path);
 			return null;
 		}
 		else {
@@ -87,9 +89,5 @@ public class StandardMessage extends StandardItem{
 		else {
 			return item.getValue();
 		}
-	}
-	
-	private void debug(String msg) {
-		if(debug) System.out.println(msg);
-	}
+	}	
 }

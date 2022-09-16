@@ -2,13 +2,18 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.8.0_172"/>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="resources"/>
 	<classpathentry kind="lib" path="lib/jackson-annotations-2.12.3.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-core-2.12.3.jar"/>
-	<classpathentry kind="lib" path="lib/jackson-databind-2.12.3.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-databind-2.12.3.jar" sourcepath="C:/Users/elink/AppData/Local/Temp/.org.sf.feeling.decompiler1663288723631/source/jackson-databind-2.12.3-sources.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-datatype-jdk8-2.12.3.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-datatype-jsr310-2.12.3.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-module-parameter-names-2.12.3.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang3-3.5.jar"/>
-	<classpathentry kind="lib" path="lib/dom4j-2.1.3.jar" sourcepath="C:/Users/elink/AppData/Local/Temp/.org.sf.feeling.decompiler1663029542714/source/dom4j-2.1.3-sources.jar"/>
+	<classpathentry kind="lib" path="lib/dom4j-2.1.3.jar" sourcepath="C:/Users/elink/AppData/Local/Temp/.org.sf.feeling.decompiler1663288723631/source/dom4j-2.1.3-sources-1663290469001.jar"/>
+	<classpathentry kind="lib" path="lib/jcl-over-slf4j-1.7.25.jar"/>
+	<classpathentry kind="lib" path="lib/logback-classic-1.2.5.jar"/>
+	<classpathentry kind="lib" path="lib/logback-core-1.2.5.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-1.7.25.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

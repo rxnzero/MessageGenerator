@@ -7,13 +7,16 @@ import java.util.LinkedHashMap;
 import org.dom4j.Attribute;
 import org.dom4j.DocumentException;
 import org.dom4j.Node;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class XmlReader implements StandardReader {
-	static boolean debug = true;
+	static Logger logger = null;
 	private String FIELD_SEPARATOR = "/";
 	private boolean ZERO_BASE_INDEX = false;
 	
 	public XmlReader() {
+		if(logger == null) logger = LoggerFactory.getLogger(this.getClass());
 	}
 	
 	public StandardMessage parse(StandardMessage message, String xmlString) {
@@ -28,14 +31,14 @@ public class XmlReader implements StandardReader {
 //		ArrayList<StandardItem> list = message.toList();
 //		for(int i=0; i<list.size(); i++) {
 //			StandardItem item = list.get(i);
-//			debug( i + " - "+ item.getLevel() + " : " +item.getName());
+//			logger.debug( i + " - "+ item.getLevel() + " : " +item.getName());
 //		}
 		
 		
 //		ArrayList<StandardItem> childList = message.getChildsList();
 //		int i=0;
 //		for(StandardItem item:childList) {
-//			debug( i++ + " - "+ item.getLevel() + " : " +item.getName());
+//			logger.debug( i++ + " - "+ item.getLevel() + " : " +item.getName());
 //			jsonNode.get(item.getName());
 //		}
 		
@@ -45,7 +48,7 @@ public class XmlReader implements StandardReader {
 		message.setName(rootName);
 		traverse(message, root, null, itemMap);
 		for(String key:itemMap.keySet()) {
-			debug("~ itemMap : " + key + " => " + itemMap.get(key));
+			logger.debug("~ itemMap : " + key + " => " + itemMap.get(key));
 		}
 		return message;		
 	}
@@ -55,7 +58,7 @@ public class XmlReader implements StandardReader {
 		String fullPath = null;
 		String fieldName = null;
 		if(root == null) {
-			debug("$ SKIP :: node is NULL name="+ parentName);
+			logger.debug("$ SKIP :: node is NULL name="+ parentName);
 			return;
 		}
 		Iterator<org.dom4j.Element> i = root.elementIterator();
@@ -71,31 +74,32 @@ public class XmlReader implements StandardReader {
             fieldName = genPath(parentName, fieldName);
             currentItem = item.findItem(fieldName, FIELD_SEPARATOR, ZERO_BASE_INDEX, true);
             if(currentItem == null) return;
-            
-            if(Node.ELEMENT_NODE== child.getNodeType()) {
-            	debug("$ ELEMENT_NODE name="+ fieldName + ", fullPath="+ fullPath+ ", value="+ child.getStringValue());            	
-            	if(currentItem.getType() == StandardType.FIELD.getValue()) {
-            		itemMap.put(fieldName , child.getStringValue());
-        	        currentItem.setValue(child.getStringValue());
-            	}
-            	else {
-            		int attrCnt = child.attributeCount();
-            		for (int ai=0; ai<attrCnt; ai++) {
-            			Attribute at = child.attribute(ai);
-            			String atPath = genPath(fieldName, at.getName());
-            			debug("@ ATTRIBUTE name="+ atPath + ", fullPath="+ at.getUniquePath()+ ", value="+ at.getStringValue());
-            			StandardItem attrItem = item.findItem(atPath, FIELD_SEPARATOR, ZERO_BASE_INDEX, true);
-            			itemMap.put(atPath, at.getStringValue());
-            			attrItem.setValue(at.getStringValue());
-            		}
-            		traverse(item, child, fieldName, itemMap);
-            	}
-            }
-            else if(Node.TEXT_NODE == child.getNodeType()) {
-            	debug("$ TEXT_NODE value="+ child.getStringValue());
-            }
-            else {
-            	debug("$ type="+ child.getNodeType() + ", name=" + fieldName);
+            switch(child.getNodeType()) {
+            	case  Node.ELEMENT_NODE:
+            		logger.debug("$ ELEMENT_NODE name="+ fieldName + ", fullPath="+ fullPath+ ", value="+ child.getStringValue());            	
+                	if(currentItem.getType() == StandardType.FIELD) {
+                		itemMap.put(fieldName , child.getStringValue());
+            	        currentItem.setValue(child.getStringValue());
+                	}
+                	else {
+                		int attrCnt = child.attributeCount();
+                		for (int ai=0; ai<attrCnt; ai++) {
+                			Attribute at = child.attribute(ai);
+                			String atPath = genPath(fieldName, at.getName());
+                			logger.debug("@ ATTRIBUTE name="+ atPath + ", fullPath="+ at.getUniquePath()+ ", value="+ at.getStringValue());
+                			StandardItem attrItem = item.findItem(atPath, FIELD_SEPARATOR, ZERO_BASE_INDEX, true);
+                			itemMap.put(atPath, at.getStringValue());
+                			attrItem.setValue(at.getStringValue());
+                		}
+                		traverse(item, child, fieldName, itemMap);
+                	}
+            		break;
+            	case  Node.TEXT_NODE:
+            		logger.debug("$ TEXT_NODE value="+ child.getStringValue());
+            		break;
+            	default:
+            		logger.debug("$ type="+ child.getNodeType() + ", name=" + fieldName);
+            		break;
             }
 		}
 	}
@@ -105,10 +109,6 @@ public class XmlReader implements StandardReader {
 			return nodeName;
 		}
 		return parent + FIELD_SEPARATOR + nodeName;
-	}
-	
-	private static void debug(String msg) {
-		if(debug) System.out.println(msg);
 	}
 	
 	protected String lastNodeName(String xpath) {

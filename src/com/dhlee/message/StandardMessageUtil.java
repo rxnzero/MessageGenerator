@@ -5,11 +5,13 @@ import java.util.LinkedHashMap;
 import java.util.Stack;
 
 import org.apache.commons.lang3.SerializationUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StandardMessageUtil {
-
+	static Logger logger = null;
 	public StandardMessageUtil() {
-		// TODO Auto-generated constructor stub
+		if(logger == null) logger = LoggerFactory.getLogger(this.getClass());
 	}
 	
 	// TODO : if Fixed Array, clone list item to length ?
@@ -45,11 +47,11 @@ public class StandardMessageUtil {
 					throw new Exception("item level error - "+ item.getName() +" level diff=" + levelDiff);
 				}
 				
-				if(parent.getType() == StandardType.GROUP.getValue()) {
+				if(parent.getType() == StandardType.GROUP) {
 //					System.out.println("add group child item - " + item);
 					parent.addItem(item);
 				}
-				else if(parent.getType() == StandardType.ARRAY.getValue()) {
+				else if(parent.getType() == StandardType.ARRAY) {
 					parent.addArrayItem(0, item);
 				}
 				else {

@@ -2,7 +2,11 @@ package com.dhlee.message;
 
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class SrandardMessageTest {
+	static Logger logger = LoggerFactory.getLogger(SrandardMessageTest.class);
 	static String strString ="000000000100000000020000000003KB100000000210000000022000000011100000001120000000113000000021100000002120000000213000000031100000003120000000313";
 
 	static String jsonString = "{" 
@@ -108,40 +112,40 @@ public class SrandardMessageTest {
 	
 	public static StandardMessage generateMessage() {
 		// Test generator from List definition (with default values)
-		System.out.println("\n>> ----------------------------------------------------------------------------------");
-		System.out.println(">> Test generator from List definition ( with default values)");
+		logger.debug("\n>> ----------------------------------------------------------------------------------");
+		logger.debug(">> Test generator from List definition ( with default values)");
 		ArrayList<StandardItem> list = new ArrayList<StandardItem>();
 		StandardItem group = null;
 		StandardItem item = null;
-		group = new StandardItem("Header", 1, StandardType.GROUP.getValue(), 1, 0, 0, null);
+		group = new StandardItem("Header", 1, StandardType.GROUP, 1, 0, 0, null);
 		list.add(group);
-		item = new StandardItem("StndCicsTrncd", 2, StandardType.FIELD.getValue(), 1, 10, 0, "");
+		item = new StandardItem("StndCicsTrncd", 2, StandardType.FIELD, 1, 10, 0, "");
 		list.add(item);
-		item = new StandardItem("StndIntnlStndTelgmLen", 2, StandardType.FIELD.getValue(), 1, 10, 1, "0");
+		item = new StandardItem("StndIntnlStndTelgmLen", 2, StandardType.FIELD, 1, 10, 1, "0");
 		list.add(item);
-		item = new StandardItem("StndTranBaseYmd", 2, StandardType.FIELD.getValue(), 1, 10, 0, "");
+		item = new StandardItem("StndTranBaseYmd", 2, StandardType.FIELD, 1, 10, 0, "");
 		list.add(item);
 
-		StandardItem group1 = new StandardItem("Common", 1, StandardType.GROUP.getValue(), 0, 0, null);
+		StandardItem group1 = new StandardItem("Common", 1, StandardType.GROUP, 0, 0, null);
 		list.add(group1);
-		group = new StandardItem("TranInfo", 2, StandardType.GROUP.getValue(), 0, 0, null);
+		group = new StandardItem("TranInfo", 2, StandardType.GROUP, 0, 0, null);
 		list.add(group);
-		item = new StandardItem("StndCicsTrncd", 3, StandardType.FIELD.getValue(), 3, 0, "KB0");
+		item = new StandardItem("StndCicsTrncd", 3, StandardType.FIELD, 3, 0, "KB0");
 		list.add(item);
-		item = new StandardItem("StndTelgmRecvTranCd", 3, StandardType.FIELD.getValue(), 10, 0, "");
+		item = new StandardItem("StndTelgmRecvTranCd", 3, StandardType.FIELD, 10, 0, "");
 		list.add(item);
-		item = new StandardItem("StndPrcssRtdTranCd", 3, StandardType.FIELD.getValue(), 10, 0, "");
+		item = new StandardItem("StndPrcssRtdTranCd", 3, StandardType.FIELD, 10, 0, "");
 		list.add(item);
 		
-		group = new StandardItem("Array", 1, StandardType.ARRAY.getValue(), 3, 0, null);
+		group = new StandardItem("Array", 1, StandardType.ARRAY, 3, 0, null);
 		list.add(group);
-		item = new StandardItem("Item1", 2, StandardType.FIELD.getValue(), 10, 0, "JI6H");
+		item = new StandardItem("Item1", 2, StandardType.FIELD, 10, 0, "JI6H");
 		list.add(item);
-		item = new StandardItem("Group", 2, StandardType.ARRAY.getValue(), 1, 0, null);
+		item = new StandardItem("Group", 2, StandardType.ARRAY, 1, 0, null);
 		list.add(item);
-		item = new StandardItem("gitem1", 3, StandardType.FIELD.getValue(), 10, 1, "726");
+		item = new StandardItem("gitem1", 3, StandardType.FIELD, 10, 1, "726");
 		list.add(item);
-		item = new StandardItem("gitem2", 3, StandardType.FIELD.getValue(), 10, 0, "20220905");
+		item = new StandardItem("gitem2", 3, StandardType.FIELD, 10, 0, "20220905");
 		list.add(item);
 
 		StandardMessage message = null;;
@@ -158,37 +162,37 @@ public class SrandardMessageTest {
 		// 2. XML -> List -> gen
 		// 3. JSON -> List -> gen
 		
-		System.out.println("@toString\n" + message.toString());
-		System.out.println("@toJson\n" + message.toJson());
+		logger.debug("@toString\n" + message.toString());
+		logger.debug("@toJson\n" + message.toJson());
 		
 		// Test initialize getter
-		System.out.println("\n>> ----------------------------------------------------------------------------------");
-		System.out.println(">> Test initialize getter");
+		logger.debug("\n>> ----------------------------------------------------------------------------------");
+		logger.debug(">> Test initialize getter");
 		String findItem = "StndCicsTrncd";
-		System.out.println(findItem + " => " +message.findItemValue(findItem));
+		logger.debug(findItem + " => " +message.findItemValue(findItem));
 		
 		findItem = "Header.StndCicsTrncd";
-		System.out.println(findItem + " => " +message.findItemValue(findItem));
+		logger.debug(findItem + " => " +message.findItemValue(findItem));
 		
 		findItem = "Common.TranInfo.StndCicsTrncd";
-		System.out.println(findItem + " => " +message.findItemValue(findItem));
+		logger.debug(findItem + " => " +message.findItemValue(findItem));
 		
-		System.out.println("\n>> ----------------------------------------------------------------------------------");
-		System.out.println(">> Test file item with path & set value");
+		logger.debug("\n>> ----------------------------------------------------------------------------------");
+		logger.debug(">> Test file item with path & set value");
 		StandardItem it = message.findItem(findItem);
 		if(it !=null) {
 			it.setValue("changed!");
 		}
-		System.out.println(findItem + " => " +message.findItemValue(findItem));
+		logger.debug(findItem + " => " +message.findItemValue(findItem));
 		
 		findItem = "Common.TranInfo.StndCicsTrncd1";
-		System.out.println(findItem + " => " +message.findItemValue(findItem));
+		logger.debug(findItem + " => " +message.findItemValue(findItem));
 		
 		findItem = "Array[0].Group.gitem2";
-		System.out.println(findItem + " => " +message.findItemValue(findItem));
+		logger.debug(findItem + " => " +message.findItemValue(findItem));
 		
 		findItem = "Array[0]";
-		System.out.println(findItem + " => " +message.findItem(findItem));
+		logger.debug(findItem + " => " +message.findItem(findItem));
 		
 		return message;
 	}
@@ -200,9 +204,9 @@ public class SrandardMessageTest {
 			return;
 		}
 		
-		System.out.println(">> Test Json Parsing");
+		logger.debug(">> Test Json Parsing");
 		
-		System.out.println("jsonString = " +jsonString);
+		logger.debug("jsonString = " +jsonString);
 		
 		// Test Json parsing
 //		StandardReader jsonReader = new JsonReader();
@@ -220,23 +224,23 @@ public class SrandardMessageTest {
 		}
 		jsonReader.parse(message, jsonString);
 		
-		System.out.println(">> message=\n" + message);
-		System.out.println(">> message.toJson()=\n" + message.toJson());
-		System.out.println(">> message.toPrettyJson()=\n" + message.toPrettyJson());
-		System.out.println(">> message.toXML()=\n" + message.toXML());
-		System.out.println(">> message.toPrettyXML()=\n" + message.toPrettyXML());
+		logger.debug(">> message=\n" + message);
+		logger.debug(">> message.toJson()=\n" + message.toJson());
+		logger.debug(">> message.toPrettyJson()=\n" + message.toPrettyJson());
+		logger.debug(">> message.toXML()=\n" + message.toXML());
+		logger.debug(">> message.toPrettyXML()=\n" + message.toPrettyXML());
 		// Test getter after parsing
-		System.out.println("\n>> ----------------------------------------------------------------------------------");
+		logger.debug("\n>> ----------------------------------------------------------------------------------");
 		String findItem = null;
-		System.out.println(">> Test getter after parsing");
+		logger.debug(">> Test getter after parsing");
 		findItem = "Array[0].Group[0].gitem1";
-		System.out.println(findItem + " => " +message.findItemValue(findItem));
+		logger.debug(findItem + " => " +message.findItemValue(findItem));
 		findItem = "Array[1].Group[0].gitem1";
-		System.out.println(findItem + " => " +message.findItemValue(findItem));
+		logger.debug(findItem + " => " +message.findItemValue(findItem));
 		findItem = "Array[2].Group[0].gitem1";
-		System.out.println(findItem + " => " +message.findItemValue(findItem));		
+		logger.debug(findItem + " => " +message.findItemValue(findItem));		
 		findItem = "Array[2].Group[1].gitem1";
-		System.out.println(findItem + " => " +message.findItemValue(findItem));
+		logger.debug(findItem + " => " +message.findItemValue(findItem));
 	}
 	
 	public static void testXmlReader() throws Exception {
@@ -246,29 +250,29 @@ public class SrandardMessageTest {
 			return;
 		}
 		
-		System.out.println(">> Test Json Parsing");
+		logger.debug(">> Test Json Parsing");
 		
-		System.out.println("jsonString = " + xmlString);
+		logger.debug("jsonString = " + xmlString);
 		
 		// Test XML parsing
 		StandardReader jsonReader = new XmlReader();
 		jsonReader.parse(message, xmlString);
 		
-		System.out.println(">> message=\n" + message);
-		System.out.println(">> message.toJson()=\n" + message.toJson());
-		System.out.println(">> message.toXML()=\n" + message.toXML());
+		logger.debug(">> message=\n" + message);
+		logger.debug(">> message.toJson()=\n" + message.toJson());
+		logger.debug(">> message.toXML()=\n" + message.toXML());
 		// Test getter after parsing
-		System.out.println("\n>> ----------------------------------------------------------------------------------");
+		logger.debug("\n>> ----------------------------------------------------------------------------------");
 		String findItem = null;
-		System.out.println(">> Test getter after parsing");
+		logger.debug(">> Test getter after parsing");
 		findItem = "Array[0].Group[0].gitem1";
-		System.out.println(findItem + " => " +message.findItemValue(findItem));
+		logger.debug(findItem + " => " +message.findItemValue(findItem));
 		findItem = "Array[1].Group[0].gitem1";
-		System.out.println(findItem + " => " +message.findItemValue(findItem));
+		logger.debug(findItem + " => " +message.findItemValue(findItem));
 		findItem = "Array[2].Group[0].gitem1";
-		System.out.println(findItem + " => " +message.findItemValue(findItem));		
+		logger.debug(findItem + " => " +message.findItemValue(findItem));		
 		findItem = "Array[2].Group[1].gitem1";
-		System.out.println(findItem + " => " +message.findItemValue(findItem));
+		logger.debug(findItem + " => " +message.findItemValue(findItem));
 	}
 	
 	
@@ -279,9 +283,9 @@ public class SrandardMessageTest {
 			return;
 		}
 		
-		System.out.println(">> Test Parsing");
+		logger.debug(">> Test Parsing");
 		
-		System.out.println("messageString = " +messageString);
+		logger.debug("messageString = " +messageString);
 		
 		// Test Json parsing
 		// Test Dynamic Loading
@@ -297,37 +301,37 @@ public class SrandardMessageTest {
 		}
 		reader.parse(message, messageString);
 		
-		System.out.println(">> message=\n" + message);
-		System.out.println(">> message.toJson()=\n" + message.toJson());
-		System.out.println(">> message.toPrettyJson()=\n" + message.toPrettyJson());
-		System.out.println(">> message.toXML()=\n" + message.toXML());
-		System.out.println(">> message.toPrettyXML()=\n" + message.toPrettyXML());
-		System.out.println(">> message.toByteArray()=\n[" + new String(message.toByteArray()) +"]");
+		logger.debug(">> message=\n" + message);
+		logger.debug(">> message.toJson()=\n" + message.toJson());
+		logger.debug(">> message.toPrettyJson()=\n" + message.toPrettyJson());
+		logger.debug(">> message.toXML()=\n" + message.toXML());
+		logger.debug(">> message.toPrettyXML()=\n" + message.toPrettyXML());
+		logger.debug(">> message.toByteArray()=\n[" + new String(message.toByteArray()) +"]");
 		// Test getter after parsing
-		System.out.println("\n>> ----------------------------------------------------------------------------------");
+		logger.debug("\n>> ----------------------------------------------------------------------------------");
 		String findItem = null;
-		System.out.println(">> Test getter after parsing");
+		logger.debug(">> Test getter after parsing");
 		findItem = "Array[0].Group[0].gitem1";
-		System.out.println(findItem + " => " +message.findItemValue(findItem));
+		logger.debug(findItem + " => " +message.findItemValue(findItem));
 		findItem = "Array[1].Group[0].gitem1";
-		System.out.println(findItem + " => " +message.findItemValue(findItem));
+		logger.debug(findItem + " => " +message.findItemValue(findItem));
 		findItem = "Array[2].Group[0].gitem1";
-		System.out.println(findItem + " => " +message.findItemValue(findItem));		
+		logger.debug(findItem + " => " +message.findItemValue(findItem));		
 		findItem = "Array[2].Group[1].gitem1";
-		System.out.println(findItem + " => " +message.findItemValue(findItem));
+		logger.debug(findItem + " => " +message.findItemValue(findItem));
 		
-		System.out.println(">> Test getter after parsing");
+		logger.debug(">> Test getter after parsing");
 		findItem = "Array[0].Group[0]";
 		StandardItem item = message.findItem(findItem);
 		if(item == null) {
-			System.out.println(findItem + " NOT FOUND!");
+			logger.debug(findItem + " NOT FOUND!");
 		}
 		else {
-			System.out.println("toCSVString=\n" + item.toCSVString());
-			System.out.println("toString=\n" + item.toString());
-			System.out.println("toJson=\n" + item.toJson());
-			System.out.println("toXML=\n" + item.toXML());
-			System.out.println("toByteArray=\n[" + new String(item.toByteArray()) + "]" );
+			logger.debug("toCSVString=\n" + item.toCSVString());
+			logger.debug("toString=\n" + item.toString());
+			logger.debug("toJson=\n" + item.toJson());
+			logger.debug("toXML=\n" + item.toXML());
+			logger.debug("toByteArray=\n[" + new String(item.toByteArray()) + "]" );
 		}
 	}
 	
@@ -361,30 +365,30 @@ public class SrandardMessageTest {
 		group1.addItem(group);
 		message.addItem(group1);
 		
-		System.out.println(">> toString");
-		System.out.println(message.toString());
-		System.out.println(">> toCSVString");
-		System.out.println(message.toCSVString());
-		System.out.println(">> toJson");
-		System.out.println(message.toJson());
+		logger.debug(">> toString");
+		logger.debug(message.toString());
+		logger.debug(">> toCSVString");
+		logger.debug(message.toCSVString());
+		logger.debug(">> toJson");
+		logger.debug(message.toJson());
 		
 		String findItem = "StndCicsTrncd";
-		System.out.println(findItem + " => " +message.findItemValue(findItem));
+		logger.debug(findItem + " => " +message.findItemValue(findItem));
 		
 		findItem = "Header.StndCicsTrncd";
-		System.out.println(findItem + " => " +message.findItemValue(findItem));
+		logger.debug(findItem + " => " +message.findItemValue(findItem));
 		
 		findItem = "Common.TranInfo.StndCicsTrncd";
-		System.out.println(findItem + " => " +message.findItemValue(findItem));
+		logger.debug(findItem + " => " +message.findItemValue(findItem));
 		
 		findItem = "Common.TranInfo.StndCicsTrncd1";
-		System.out.println(findItem + " => " +message.findItemValue(findItem));
+		logger.debug(findItem + " => " +message.findItemValue(findItem));
 	}
 	
 	public static void splitTest(String path, String pathSeparator) {
 		String[] paths = null;
-		System.out.println("path=" + path);
-		System.out.println("pathSeparator=" + pathSeparator);
+		logger.debug("path=" + path);
+		logger.debug("pathSeparator=" + pathSeparator);
 		
 		paths = path.split("[" + pathSeparator +"]");
 		int index =0;
@@ -402,7 +406,7 @@ public class SrandardMessageTest {
 				testDynamicReader("com.dhlee.message.FlatReader", testString);
 			}
 			catch(Exception ex) {
-				System.out.println("success test : " + ex.toString());
+				logger.debug("success test : " + ex.toString());
 			}
 		}
 		
@@ -413,7 +417,7 @@ public class SrandardMessageTest {
 				testDynamicReader("com.dhlee.message.FlatReader", testString);
 			}
 			catch(Exception ex) {
-				System.out.println("underflow test : " + ex.toString());
+				logger.debug("underflow test : " + ex.toString());
 			}
 		}
 		// overflow
@@ -423,7 +427,7 @@ public class SrandardMessageTest {
 				testDynamicReader("com.dhlee.message.FlatReader", testString);
 			}
 			catch(Exception ex) {
-				System.out.println("overflow test : " + ex.toString());
+				logger.debug("overflow test : " + ex.toString());
 			}
 		}
 	}

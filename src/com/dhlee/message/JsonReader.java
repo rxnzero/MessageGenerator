@@ -1,9 +1,11 @@
 package com.dhlee.message;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -11,13 +13,15 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 
 public class JsonReader implements StandardReader {
-	static boolean debug = true;
+	static Logger logger = null;
 	private String FIELD_SEPARATOR = ".";
 	private boolean ZERO_BASE_INDEX = true;
 	
 	public JsonReader() {
+		if(logger == null) logger = LoggerFactory.getLogger(this.getClass());
 	}
 
 	public StandardMessage parse(StandardMessage message, String jsonString) {
@@ -42,12 +46,12 @@ public class JsonReader implements StandardReader {
 //		ArrayList<StandardItem> list = message.toList();
 //		for(int i=0; i<list.size(); i++) {
 //			StandardItem item = list.get(i);
-//			debug( i + " - "+ item.getLevel() + " : " +item.getName());
+//			logger.debug( i + " - "+ item.getLevel() + " : " +item.getName());
 //		}
 //		ArrayList<StandardItem> childList = message.getChildsList();
 //		int i=0;
 //		for(StandardItem item:childList) {
-//			debug( i++ + " - "+ item.getLevel() + " : " +item.getName());
+//			logger.debug( i++ + " - "+ item.getLevel() + " : " +item.getName());
 //			jsonNode.get(item.getName());
 //		}
 		
@@ -56,7 +60,7 @@ public class JsonReader implements StandardReader {
 		traverse(message, jsonNode, null, itemMap);
 
 		for(String key:itemMap.keySet()) {
-			debug("~ itemMap : " + key + " => " + itemMap.get(key));
+			logger.debug("~ itemMap : " + key + " => " + itemMap.get(key));
 		}
 		return message;		
 	}
@@ -65,36 +69,41 @@ public class JsonReader implements StandardReader {
 		StandardItem currentItem = null;
 		String fieldName = null;
 		if(parentName != null) {
-			debug("$ findItem :: findItem="+ parentName);
+			logger.debug("$ findItem :: findItem="+ parentName);
 			currentItem = item.findItem(parentName, FIELD_SEPARATOR, ZERO_BASE_INDEX, true);
 			if(currentItem == null) {
-				debug("$ SKIP :: undefined path in StandardMessage node name="+ parentName);
+				logger.debug("$ SKIP :: undefined path in StandardMessage node name="+ parentName);
 				return;
 			}
 		}
 		if(root == null) {
-			debug("$ SKIP :: node is NULL name="+ parentName);
+			logger.debug("$ SKIP :: node is NULL name="+ parentName);
 			return;
 		}
-	    if(root.isObject()){
-	        Iterator<String> fieldNames = root.fieldNames();
-	        while(fieldNames.hasNext()) {
-	            fieldName = fieldNames.next();
-	            JsonNode fieldValue = root.get(fieldName);
-	            fieldName = genPath(parentName, fieldName);
-	            traverse(item, fieldValue, fieldName, itemMap);
-	        }
-	    } else if(root.isArray()){
-	        ArrayNode arrayNode = (ArrayNode) root;
-	        for(int i = 0; i < arrayNode.size(); i++) {
-	            JsonNode arrayElement = arrayNode.get(i);
-	            traverse(item, arrayElement, parentName+"["+ i+"]", itemMap);
-	        }
-	    } else {
-	        debug("parsing : " + parentName + "=" +root.asText());
-	        itemMap.put(parentName , root.asText());
-	        currentItem.setValue(root.asText());
-	    }
+		
+		switch(root.getNodeType()) {
+			case OBJECT:
+				Iterator<String> fieldNames = root.fieldNames();
+		        while(fieldNames.hasNext()) {
+		            fieldName = fieldNames.next();
+		            JsonNode fieldValue = root.get(fieldName);
+		            fieldName = genPath(parentName, fieldName);
+		            traverse(item, fieldValue, fieldName, itemMap);
+		        }
+				break;
+			case ARRAY:
+				ArrayNode arrayNode = (ArrayNode) root;
+		        for(int i = 0; i < arrayNode.size(); i++) {
+		            JsonNode arrayElement = arrayNode.get(i);
+		            traverse(item, arrayElement, parentName+"["+ i+"]", itemMap);
+		        }
+				break;
+			default:
+				logger.debug("parsing : " + parentName + "=" +root.asText());
+		        itemMap.put(parentName , root.asText());
+		        currentItem.setValue(root.asText());
+				break;				
+		}
 	}
 
 	private String genPath(String parent, String nodeName) {
@@ -103,11 +112,7 @@ public class JsonReader implements StandardReader {
 		}
 		return parent +FIELD_SEPARATOR + nodeName;
 	}
-	
-	private static void debug(String msg) {
-		if(debug) System.out.println(msg);
-	}
-	
+
 //	public static void main(String[] args) {
 //	}
 
