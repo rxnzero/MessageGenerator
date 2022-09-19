@@ -24,7 +24,7 @@ public class JsonReader implements StandardReader {
 		if(logger == null) logger = LoggerFactory.getLogger(this.getClass());
 	}
 
-	public StandardMessage parse(StandardMessage message, String jsonString) {
+	public StandardMessage parse(StandardMessage message, String jsonString) throws Exception {
 		JsonNode jsonNode = null;
 	    ObjectMapper mapper =  null;
 	    JsonFactory factory = null;
@@ -36,11 +36,13 @@ public class JsonReader implements StandardReader {
 			parser = factory.createParser(jsonString);
 		} catch (IOException e) {
 			e.printStackTrace();
+			throw e;
 		}
 		try {
 			jsonNode = mapper.readTree(parser);
 		} catch (IOException e) {
 			e.printStackTrace();
+			throw e;
 		}
 		
 //		ArrayList<StandardItem> list = message.toList();

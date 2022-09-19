@@ -19,13 +19,14 @@ public class XmlReader implements StandardReader {
 		if(logger == null) logger = LoggerFactory.getLogger(this.getClass());
 	}
 	
-	public StandardMessage parse(StandardMessage message, String xmlString) {
+	public StandardMessage parse(StandardMessage message, String xmlString) throws Exception {
 		org.dom4j.io.SAXReader saxReader = new org.dom4j.io.SAXReader();
         org.dom4j.Document document = null;
 		try {
 			document = saxReader.read(new StringReader(xmlString));
 		} catch (DocumentException e) {
 			e.printStackTrace();
+			throw e;
 		}
         org.dom4j.Element root = document.getRootElement();
 //		ArrayList<StandardItem> list = message.toList();
