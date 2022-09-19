@@ -74,11 +74,21 @@ public class JsonReader implements StandardReader {
 			if(currentItem == null) {
 				logger.debug("$ SKIP :: undefined path in StandardMessage node name="+ parentName);
 				return;
-			}
+			}			
 		}
 		if(root == null) {
 			logger.debug("$ SKIP :: node is NULL name="+ parentName);
 			return;
+		}
+		
+		if( currentItem!=null && currentItem.getType() == StandardType.BIZDATA) {
+			logger.warn("BIZDATA1 : {}", root.toString());
+			logger.warn("BIZDATA2 : {}", root.asText());
+			String bizData = root.toString();
+			itemMap.put(parentName , bizData);
+	        currentItem.setValue(bizData);
+	        item.setBizData(bizData);
+	        return;
 		}
 		
 		switch(root.getNodeType()) {

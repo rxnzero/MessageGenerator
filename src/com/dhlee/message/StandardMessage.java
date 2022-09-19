@@ -9,7 +9,16 @@ public class StandardMessage extends StandardItem{
 	private static final long serialVersionUID = 8250470942348479859L;
 	static Logger logger = LoggerFactory.getLogger(StandardMessage.class);
 	int readPosition = 0;
+	private String bizData = null;
 	
+	public String getBizData() {
+		return bizData;
+	}
+
+	public void setBizData(String bizData) {
+		this.bizData = bizData;
+	}
+
 	public StandardMessage() {
 		this.name = "StandardRoot"; // XML 일 경우 Root name으로 사용 ?
 		this.type = 0; 

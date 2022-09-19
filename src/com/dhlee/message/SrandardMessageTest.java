@@ -53,6 +53,11 @@ public class SrandardMessageTest {
 			+"    \"StndIntnlStndTelgmLen\":100, " 
 			+"    \"StndTranBaseYmd\":\"20220913\"" 
 			+"  }" 
+			+"  , \"bizData\": {" 
+			+"    \"bizfield1\":\"BIZ1\", " 
+			+"    \"bizfield2\":\"BIZ2\", " 
+			+"    \"bizfield3\":\"BIZ3\" " 
+			+"  }"
 			+"}";
 	
 	static String xmlString = 
@@ -91,19 +96,24 @@ public class SrandardMessageTest {
 		+"<Array>"
 		+" <Item1>ARR3</Item1>"
 		+"<Group>"
-			+" <gitem1>301</gitem1>"
-			+" <gitem2>20220915</gitem2>"
+			+"<gitem1>301</gitem1>"
+			+"<gitem2>20220915</gitem2>"
 		+"</Group>"
 		+"<Group>"
-			+" <gitem1>302</gitem1>"
-			+" <gitem2>20220915</gitem2>"
+			+"<gitem1>302</gitem1>"
+			+"<gitem2>20220915</gitem2>"
 		+"</Group>"
 		+"</Array>"
 		+"<AddOn>"
-		+" <StndCicsTrncd>TEST</StndCicsTrncd>"
-		+" <StndIntnlStndTelgmLen>100</StndIntnlStndTelgmLen>"
-		+" <StndTranBaseYmd>20220913</StndTranBaseYmd>"
+		+"<StndCicsTrncd>TEST</StndCicsTrncd>"
+		+"<StndIntnlStndTelgmLen>100</StndIntnlStndTelgmLen>"
+		+"<StndTranBaseYmd>20220913</StndTranBaseYmd>"
 		+"</AddOn>"
+		+"<bizData>"
+		+"<bizfield1>BIZ1</bizfield1>"
+		+"<bizfield2>BIZ2</bizfield2>"
+		+"<bizfield3>BIZ3</bizfield3>"
+		+"</bizData>"
 	+"</Root>";
 	
 	public SrandardMessageTest() {
@@ -147,7 +157,10 @@ public class SrandardMessageTest {
 		list.add(item);
 		item = new StandardItem("gitem2", 3, StandardType.FIELD, 10, 0, "20220905");
 		list.add(item);
-
+		
+		item = new StandardItem("bizData", 1, StandardType.BIZDATA, 1, 0, null);
+		list.add(item);
+		
 		StandardMessage message = null;;
 		try {
 			message = StandardMessageUtil.generate(list);
@@ -397,7 +410,7 @@ public class SrandardMessageTest {
 		}
 	}
 	
-	public static void testDymamic( int caseNumber) {
+	public static void testFlatReader( int caseNumber) {
 		String testString = null; 
 		
 		if( caseNumber == 1) {
@@ -437,9 +450,9 @@ public class SrandardMessageTest {
 //		testJsonReader();
 //		testDynamicReader("com.dhlee.message.JsonReader", jsonString);
 //		testXmlReader();
-//		testDynamicReader("com.dhlee.message.XmlReader", xmlString);
+		testDynamicReader("com.dhlee.message.XmlReader", xmlString);
 		
-		testDymamic(1);
+//		testFlatReader(1);
 		
 		// Json Case
 //		splitTest("Array[0].Group[0].gitem2", ".");

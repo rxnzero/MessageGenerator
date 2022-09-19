@@ -9,6 +9,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 import org.apache.commons.lang3.SerializationUtils;
+
+import com.fasterxml.jackson.databind.deser.ValueInstantiator.Gettable;
  
 public class StandardItem  implements Serializable, Cloneable {
 	private static final long serialVersionUID = -4430144517271735912L;
@@ -21,8 +23,8 @@ public class StandardItem  implements Serializable, Cloneable {
 	
 	String name;
 	int level; // 0 : root  ~ n
-	int type; // 0: Message, 1: Field, 2:Group 3, Array
-	int fieldType; // 0: ELEMENT, 1: ATTRIBUTE
+	int type; // 0: Message, 1: Field, 2:Group 3, Array, 4 : BIZ DATA
+	int fieldType; // 0: ELEMENT, 1: ATTRIBUTE,
 	int length;
 	int dataType; // 0: String, 1: Number
 	String value;
@@ -322,11 +324,13 @@ public class StandardItem  implements Serializable, Cloneable {
 	
 	public String toJson(boolean showPretty) {
 		StringBuilder sb = new StringBuilder();
-		if(type ==0) {
+		Iterator<String> keyIter = null;
+		switch(getType())  {
+		case StandardType.MESSAGE :
 			sb.append("{");
 // if root name add			
 //			sb.append("\"").append( name ).append("\"").append(": {");
-			Iterator<String> keyIter = childs.keySet().iterator();
+			keyIter = childs.keySet().iterator();
 			int i=0;
 			while(keyIter.hasNext()) {
 				if(i>0) sb.append(",");
@@ -339,31 +343,31 @@ public class StandardItem  implements Serializable, Cloneable {
 //			sb.append("}");
 			if(showPretty) sb.append("\n");
 			sb.append("}");
-		}
-		if(type ==1) {
+			break;
+		case StandardType.FIELD :
 			if(showPretty) sb.append(getLevelIndent());
 			sb.append("\"").append(name).append("\":").append(toJsonValue());
-		}
-		else if(type ==2) {
+			break;
+		case StandardType.GROUP :
 			if(showPretty) sb.append(getLevelIndent());
 			sb.append("\"").append(name).append("\":{");
-			Iterator<String> keyIter = childs.keySet().iterator();
-			int i=0;
+			keyIter = childs.keySet().iterator();
+			int g=0;
 			while(keyIter.hasNext()) {
-				if(i>0) sb.append(",");
+				if(g>0) sb.append(",");
 				String key = keyIter.next();
 				StandardItem item = childs.get(key);
 				if(showPretty) sb.append("\n");
 				sb.append(item.toJson(showPretty));
-				i++;
+				g++;
 			}
 			if(showPretty) {
 				sb.append("\n");
 				sb.append(getLevelIndent());
 			}
 			sb.append("}");
-		}
-		else if(type ==3) {
+			break;
+		case StandardType.ARRAY :
 			if(showPretty) {				
 				sb.append(getLevelIndent());
 			}
@@ -371,8 +375,8 @@ public class StandardItem  implements Serializable, Cloneable {
 //			if(showPretty) sb.append("\n");
 			for(int p=0; p<list.size(); p++) {
 				LinkedHashMap<String , StandardItem> group = list.get(p);
-				Iterator<String> keyIter = group.keySet().iterator();
-				int i=0;
+				keyIter = group.keySet().iterator();
+				int ai=0;
 				if(showPretty) {
 					sb.append("\n");
 					sb.append(getLevelIndent());
@@ -380,12 +384,12 @@ public class StandardItem  implements Serializable, Cloneable {
 				if(p>0) sb.append(",");
 				sb.append("{");
 				while(keyIter.hasNext()) {
-					if(i>0) sb.append(",");
+					if(ai>0) sb.append(",");
 					String key = keyIter.next();
 					StandardItem item = group.get(key);
 					if(showPretty) sb.append("\n");
 					sb.append(item.toJson(showPretty));
-					i++;
+					ai++;
 				}
 				
 				if(showPretty) {
@@ -401,6 +405,13 @@ public class StandardItem  implements Serializable, Cloneable {
 //				sb.append(getLevelIndent());
 //			}
 			sb.append("]");
+			break;
+		case StandardType.BIZDATA :
+			if(showPretty) sb.append(getLevelIndent());
+			sb.append("\"").append(name).append("\":").append(getValue());
+			break;
+		default :
+			break;
 		}
 		return sb.toString();
 	}
@@ -433,95 +444,105 @@ public class StandardItem  implements Serializable, Cloneable {
 	//            향후 XMLParser로 생성하는 방안은 고려해 봐야 함.
 	public String toXML(String encode, boolean showPretty) {
 		StringBuilder sb = new StringBuilder();
-		if(type ==0) {
-			sb.append("<?xml version=\"1.0\" encoding=\""+encode+"\"?>");
-			if(showPretty) sb.append("\n");
-			
-			sb.append(toStartTag(name));
-			
-			Iterator<String> keyIter = childs.keySet().iterator();
-			int i=0;
-			while(keyIter.hasNext()) {
-				String key = keyIter.next();
-				StandardItem item = childs.get(key);
-				sb.append(item.toXML(encode, showPretty));
-				i++;
-			}
-			
-			if(showPretty) sb.append("\n");
-			sb.append(toEndTag(name));
-		}
-		if(type ==1) {
-			if(fieldType == 0) {
-				if(showPretty) {
-					sb.append("\n");
-					sb.append(getLevelIndent());
-				}
+		Iterator<String> keyIter = null;
+		switch(getType()) {
+			case StandardType.MESSAGE :
+				sb.append("<?xml version=\"1.0\" encoding=\""+encode+"\"?>");
+				if(showPretty) sb.append("\n");
+				
 				sb.append(toStartTag(name));
-				sb.append(toXmlValue());
-				sb.append(toEndTag(name));
-			}
-			else {
-				sb.append(" ").append(name).append("=\"");
-				sb.append(toXmlValue()).append("\"");;
-			}
-		}
-		else if(type ==2) {
-			if(showPretty) {
-				sb.append("\n");
-				sb.append(getLevelIndent());
-			}
-			if(fieldType == 0) {
-				sb.append(toStartTag(name));
-			}
-			else {
-				sb.append("<").append(name);
-			}
-			Iterator<String> keyIter = childs.keySet().iterator();
-			int i=0;
-			while(keyIter.hasNext()) {
-				String key = keyIter.next();
-				StandardItem item = childs.get(key);
-				sb.append(item.toXML(encode, showPretty));
-				i++;
-			}
-			
-			if(fieldType == 0) {
-				if(showPretty) { 
-					sb.append("\n");
-					sb.append(getLevelIndent());
-				}
-				sb.append(toEndTag(name));
-			}
-			else {
-				sb.append(" />");;
-			}
-		}
-		else if(type ==3) {
-			if(showPretty) {
-				sb.append(getLevelIndent());
-			}
-			for(int p=0; p<list.size(); p++) {
-				if(showPretty) { 
-					sb.append("\n");
-					sb.append(getLevelIndent());
-				}	
-				sb.append(toStartTag(name));
-				LinkedHashMap<String , StandardItem> group = list.get(p);
-				Iterator<String> keyIter = group.keySet().iterator();
+				
+				keyIter = childs.keySet().iterator();
 				int i=0;
 				while(keyIter.hasNext()) {
 					String key = keyIter.next();
-					StandardItem item = group.get(key);
+					StandardItem item = childs.get(key);
 					sb.append(item.toXML(encode, showPretty));
 					i++;
 				}
+				
+				if(showPretty) sb.append("\n");
+				sb.append(toEndTag(name));
+				break;
+			case StandardType.FIELD :
+				if(fieldType == 0) {
+					if(showPretty) {
+						sb.append("\n");
+						sb.append(getLevelIndent());
+					}
+					sb.append(toStartTag(name));
+					sb.append(toXmlValue());
+					sb.append(toEndTag(name));
+				}
+				else {
+					sb.append(" ").append(name).append("=\"");
+					sb.append(toXmlValue()).append("\"");;
+				}
+				break;
+			case StandardType.GROUP :
 				if(showPretty) {
 					sb.append("\n");
 					sb.append(getLevelIndent());
 				}
-				sb.append(toEndTag(name));												
-			}			
+				if(fieldType == 0) {
+					sb.append(toStartTag(name));
+				}
+				else {
+					sb.append("<").append(name);
+				}
+				keyIter = childs.keySet().iterator();
+				while(keyIter.hasNext()) {
+					String key = keyIter.next();
+					StandardItem item = childs.get(key);
+					sb.append(item.toXML(encode, showPretty));
+				}
+				
+				if(fieldType == 0) {
+					if(showPretty) { 
+						sb.append("\n");
+						sb.append(getLevelIndent());
+					}
+					sb.append(toEndTag(name));
+				}
+				else {
+					sb.append(" />");;
+				}
+				break;
+			case StandardType.ARRAY :
+				if(showPretty) {
+					sb.append(getLevelIndent());
+				}
+				for(int p=0; p<list.size(); p++) {
+					if(showPretty) { 
+						sb.append("\n");
+						sb.append(getLevelIndent());
+					}	
+					sb.append(toStartTag(name));
+					LinkedHashMap<String , StandardItem> group = list.get(p);
+					keyIter = group.keySet().iterator();
+					while(keyIter.hasNext()) {
+						String key = keyIter.next();
+						StandardItem item = group.get(key);
+						sb.append(item.toXML(encode, showPretty));
+					}
+					if(showPretty) {
+						sb.append("\n");
+						sb.append(getLevelIndent());
+					}
+					sb.append(toEndTag(name));												
+				}
+				break;
+			case StandardType.BIZDATA :
+				if(showPretty) {
+					sb.append("\n");
+					sb.append(getLevelIndent());
+				}
+//				sb.append(toStartTag(name));
+				sb.append(getValue());
+//				sb.append(toEndTag(name));
+				break;
+			default :
+				break;			
 		}
 		return sb.toString();
 	}
@@ -529,51 +550,57 @@ public class StandardItem  implements Serializable, Cloneable {
 	
 	public byte[] toByteArray() {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		Iterator<String> keyIter = null;
 		try {
-			if(type ==0) {
-				Iterator<String> keyIter = childs.keySet().iterator();
-				int i=0;
-				while(keyIter.hasNext()) {
-					String key = keyIter.next();
-					StandardItem item = childs.get(key);
-					bos.write(item.toByteArray());
-					i++;
-				}
-			}
-			if(type ==1) {							
-				if (getValue() == null) {
-	            	bos.write( new byte[getLength()] );	            	
-	            } else if (dataType == 0) {	            	
-	            	bos.write( ByteUtil.padding(getBytesValue(), getLength()) );
-	            } else if (dataType == 1) {
-	            	bos.write( ByteUtil.padding(getValue(), getLength(), (byte)'0', true) );
-	            } else {	            	
-	            	bos.write( ByteUtil.padding(getBytesValue(), getLength()) );
-	            }
-			}
-			else if(type ==2) {
-				Iterator<String> keyIter = childs.keySet().iterator();
-				int i=0;
-				while(keyIter.hasNext()) {
-					String key = keyIter.next();
-					StandardItem item = childs.get(key);				
-					bos.write(item.toByteArray());
-					i++;
-				}			
-			}
-			else if(type ==3) {			
-				for(int p=0; p<list.size(); p++) {					
-					LinkedHashMap<String , StandardItem> group = list.get(p);
-					Iterator<String> keyIter = group.keySet().iterator();
-					int i=0;
+			switch(getType()) {
+				case StandardType.MESSAGE :
+					keyIter = childs.keySet().iterator();
 					while(keyIter.hasNext()) {
 						String key = keyIter.next();
-						StandardItem item = group.get(key);
+						StandardItem item = childs.get(key);
 						bos.write(item.toByteArray());
-						i++;
-					}												
-				}			
-			}
+					}
+					break;
+				case StandardType.FIELD :
+					if (getValue() == null) {
+		            	bos.write( new byte[getLength()] );	            	
+		            } else if (dataType == 0) {	            	
+		            	bos.write( ByteUtil.padding(getBytesValue(), getLength()) );
+		            } else if (dataType == 1) {
+		            	bos.write( ByteUtil.padding(getValue(), getLength(), (byte)'0', true) );
+		            } else {	            	
+		            	bos.write( ByteUtil.padding(getBytesValue(), getLength()) );
+		            }
+					break;
+				case StandardType.GROUP :
+					keyIter = childs.keySet().iterator();
+					while(keyIter.hasNext()) {
+						String key = keyIter.next();
+						StandardItem item = childs.get(key);				
+						bos.write(item.toByteArray());
+					}			
+					break;
+				case StandardType.ARRAY :			
+					for(int p=0; p<list.size(); p++) {					
+						LinkedHashMap<String , StandardItem> group = list.get(p);
+						keyIter = group.keySet().iterator();
+						while(keyIter.hasNext()) {
+							String key = keyIter.next();
+							StandardItem item = group.get(key);
+							bos.write(item.toByteArray());
+						}												
+					}
+					break;
+				case StandardType.BIZDATA :							
+					if (getValue() == null) {
+		            	bos.write( new byte[getLength()] );	            	
+		            } else {	            	
+		            	bos.write( getBytesValue() );
+		            }
+					break;	
+				default :
+					break;
+			}		
 			return bos.toByteArray();
 		} catch(Exception e) {
     		e.printStackTrace();

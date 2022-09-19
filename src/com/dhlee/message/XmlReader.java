@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory;
 
 public class XmlReader implements StandardReader {
 	static Logger logger = null;
-	private String FIELD_SEPARATOR = "/";
-	private boolean ZERO_BASE_INDEX = false;
+	private String FIELD_SEPARATOR = "/"; // XML use /
+	private boolean ZERO_BASE_INDEX = false; // 1 base
 	
 	public XmlReader() {
 		if(logger == null) logger = LoggerFactory.getLogger(this.getClass());
@@ -73,7 +73,16 @@ public class XmlReader implements StandardReader {
             
             fieldName = genPath(parentName, fieldName);
             currentItem = item.findItem(fieldName, FIELD_SEPARATOR, ZERO_BASE_INDEX, true);
-            if(currentItem == null) return;
+            if(currentItem == null) continue;
+            
+            if(currentItem.getType() == StandardType.BIZDATA) {
+    			String bizData = child.asXML();
+    			itemMap.put(parentName , bizData);
+    	        currentItem.setValue(bizData);
+    	        item.setBizData(bizData);
+    	        return;
+    		}
+            
             switch(child.getNodeType()) {
             	case  Node.ELEMENT_NODE:
             		logger.debug("$ ELEMENT_NODE name="+ fieldName + ", fullPath="+ fullPath+ ", value="+ child.getStringValue());            	
