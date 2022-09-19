@@ -1,4 +1,4 @@
-package com.dhlee.message;
+package com.dhlee.message.parser;
 
 import java.io.StringReader;
 import java.util.Iterator;
@@ -9,6 +9,10 @@ import org.dom4j.DocumentException;
 import org.dom4j.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.dhlee.message.StandardItem;
+import com.dhlee.message.StandardMessage;
+import com.dhlee.message.StandardType;
 
 public class XmlReader implements StandardReader {
 	static Logger logger = null;

@@ -26,6 +26,11 @@ public class StandardMessageUtil {
 			StandardItem item = itemList.get(i);
 //			System.out.println(String.format("%03d : item - %s", i, item) );
 			// 최상위일 경우 message에 저장
+			if(item.getLevel() == 0) {
+				message.setName(item.getName());
+				continue;
+			}
+			
 			if(item.getLevel() == 1) {
 				message.addItem(item);
 			}

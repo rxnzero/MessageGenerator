@@ -1,0 +1,23 @@
+# comment start with #
+# level; // 0 : root  ~ n
+# type; // 0: Message, 1: Field, 2:Group 3, Array, 4 : BIZ DATA
+# fieldType; // 0: ELEMENT, 1: ATTRIBUTE,
+# length;
+# dataType; // 0: String, 1: Number
+#name,level,type,fieldType,llength,dataType,value
+ElinkHeader          ,0,0,0, 0,0,null
+Header               ,1,2,1, 0,0,null
+StndCicsTrncd        ,2,1,1,10,0,
+StndIntnlStndTelgmLen,2,1,1,10,1,0
+StndTranBaseYmd      ,2,1,1,10,0,
+Common               ,1,2,0, 0,0,null
+TranInfo             ,2,2,0, 0,0,null
+StndCicsTrncd        ,3,1,0, 3,0,KB0
+StndTelgmRecvTranCd  ,3,1,0,10,0,
+StndPrcssRtdTranCd   ,3,1,0,10,0,
+Array                ,1,3,0, 3,0,null
+Item1                ,2,1,0,10,0,JI6H
+Group                ,2,3,0, 1,0,null
+gitem1               ,3,1,0,10,1,726
+gitem2               ,3,1,0,10,0,20220905
+bizData              ,1,4,0, 1,0,null

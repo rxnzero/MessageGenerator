@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.dhlee.message.parser.StandardReader;
+import com.dhlee.message.parser.XmlReader;
+
 public class SrandardMessageTest {
 	static Logger logger = LoggerFactory.getLogger(SrandardMessageTest.class);
 	static String strString ="000000000100000000020000000003KB100000000210000000022000000011100000001120000000113000000021100000002120000000213000000031100000003120000000313";
@@ -174,7 +177,7 @@ public class SrandardMessageTest {
 		// 1. CSV -> List -> gen
 		// 2. XML -> List -> gen
 		// 3. JSON -> List -> gen
-		
+		logger.debug("@toCSVString\n" + message.toCSVString());
 		logger.debug("@toString\n" + message.toString());
 		logger.debug("@toJson\n" + message.toJson());
 		

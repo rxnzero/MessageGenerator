@@ -63,7 +63,7 @@ public class StandardItem  implements Serializable, Cloneable {
 		this.fieldType = 0;
 		this.length = length;
 		this.dataType = dataType;
-		this.value = value;
+		setValue(value);
 	}
 	
 	public StandardItem(String name, int level, int type, int fieldType,  int length, int dataType, String value) {
@@ -74,9 +74,22 @@ public class StandardItem  implements Serializable, Cloneable {
 		this.fieldType = fieldType;
 		this.length = length;
 		this.dataType = dataType;
-		this.value = value;
+		setValue(value);
 	}
-
+	
+	public StandardItem(String[] values) throws Exception {
+		if(values == null || values.length < 6) {
+			throw new Exception("invalid StandardItem defination values : " + values); 
+		}		
+		this.name = values[0].trim();
+		this.level = Integer.parseInt(values[1].trim());
+		this.type = Integer.parseInt(values[2].trim());
+		this.fieldType = Integer.parseInt(values[3].trim());
+		this.length = Integer.parseInt(values[4].trim());;
+		this.dataType = Integer.parseInt(values[5].trim());
+		if(values.length > 6) setValue(values[6]);
+	}
+	
 	public void addItem (StandardItem item) {
 		childs.put(item.getName(), item);
 	}
@@ -252,7 +265,7 @@ public class StandardItem  implements Serializable, Cloneable {
 		StringBuilder sb = new StringBuilder();
 		
 		if(level == 0) {
-			sb.append("name,level,type,fieldType,llength,dataType,value\n");
+			sb.append("#name,level,type,fieldType,llength,dataType,value\n");
 		}
 		sb.append(name);
 		sb.append(",");

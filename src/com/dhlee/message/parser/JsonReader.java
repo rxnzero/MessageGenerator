@@ -1,4 +1,4 @@
-package com.dhlee.message;
+package com.dhlee.message.parser;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -7,6 +7,9 @@ import java.util.LinkedHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.dhlee.message.StandardItem;
+import com.dhlee.message.StandardMessage;
+import com.dhlee.message.StandardType;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
