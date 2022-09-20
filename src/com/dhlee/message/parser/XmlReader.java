@@ -15,12 +15,12 @@ import com.dhlee.message.StandardMessage;
 import com.dhlee.message.StandardType;
 
 public class XmlReader implements StandardReader {
-	static Logger logger = null;
+	static Logger logger = LoggerFactory.getLogger(XmlReader.class);
 	private String FIELD_SEPARATOR = "/"; // XML use /
 	private boolean ZERO_BASE_INDEX = false; // 1 base
 	
 	public XmlReader() {
-		if(logger == null) logger = LoggerFactory.getLogger(this.getClass());
+		
 	}
 	
 	public StandardMessage parse(StandardMessage message, String xmlString) throws Exception {

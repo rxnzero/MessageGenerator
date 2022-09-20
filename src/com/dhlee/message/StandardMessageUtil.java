@@ -9,10 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class StandardMessageUtil {
-	static Logger logger = null;
-	public StandardMessageUtil() {
-		if(logger == null) logger = LoggerFactory.getLogger(this.getClass());
+	static Logger logger = LoggerFactory.getLogger(StandardMessageUtil.class);
+	public StandardMessageUtil() {		
 	}
+	
 	
 	// TODO : if Fixed Array, clone list item to length ?
 	public static StandardMessage generate(ArrayList<StandardItem> itemList) throws Exception {
@@ -21,10 +21,10 @@ public class StandardMessageUtil {
 		int pLevel = 0;
 		int arrayIndex = 0;
 		StandardItem parent = message;
-//		System.out.println("======================================================");
+//		logger.debug("======================================================");
 		for(int i=0; i< itemList.size(); i++) {
 			StandardItem item = itemList.get(i);
-//			System.out.println(String.format("%03d : item - %s", i, item) );
+//			logger.debug(String.format("%03d : item - %s", i, item) );
 			// 최상위일 경우 message에 저장
 			if(item.getLevel() == 0) {
 				message.setName(item.getName());
@@ -53,7 +53,7 @@ public class StandardMessageUtil {
 				}
 				
 				if(parent.getType() == StandardType.GROUP) {
-//					System.out.println("add group child item - " + item);
+//					logger.debug("add group child item - " + item);
 					parent.addItem(item);
 				}
 				else if(parent.getType() == StandardType.ARRAY) {
@@ -107,9 +107,9 @@ public class StandardMessageUtil {
 	}
 	
 	public static void main(String[] args) {
-		System.out.println(getArrayIndex("group[10]"));
-		System.out.println(getArrayName("group[10]"));
-		System.out.println(getArrayIndex("group"));
-		System.out.println(getArrayName("group"));
+		logger.debug("{}", getArrayIndex("group[10]"));
+		logger.debug("{}", getArrayName("group[10]"));
+		logger.debug("{}", getArrayIndex("group"));
+		logger.debug("{}", getArrayName("group"));
 	}
 }

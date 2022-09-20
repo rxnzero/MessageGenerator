@@ -19,12 +19,12 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 
 public class JsonReader implements StandardReader {
-	static Logger logger = null;
+	static Logger logger = LoggerFactory.getLogger(JsonReader.class);
 	private String FIELD_SEPARATOR = ".";
 	private boolean ZERO_BASE_INDEX = true;
 	
 	public JsonReader() {
-		if(logger == null) logger = LoggerFactory.getLogger(this.getClass());
+		
 	}
 
 	public StandardMessage parse(StandardMessage message, String jsonString) throws Exception {

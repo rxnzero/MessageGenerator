@@ -15,14 +15,14 @@ import com.dhlee.message.StandardMessage;
 import com.dhlee.message.StandardType;
 
 public class FlatReader implements StandardReader {
-	static Logger logger = null;
+	static Logger logger = LoggerFactory.getLogger(FlatReader.class);
 	private String FIELD_SEPARATOR = ".";
 	private boolean ZERO_BASE_INDEX = true;
 	
 	private String encoding = "euc-kr";;
 	
 	public FlatReader() {
-		if(logger == null) logger = LoggerFactory.getLogger(this.getClass());
+		 
 	}
 	
 	public StandardMessage parse(StandardMessage message, String flatString) throws Exception {
