@@ -70,53 +70,53 @@ public class JsonReader implements StandardReader {
 		return message;		
 	}
 	
-	private void traverse(StandardMessage item, JsonNode root, String parentName, LinkedHashMap<String, String> itemMap){
+	private void traverse(StandardMessage message, JsonNode currentNode, String parentName, LinkedHashMap<String, String> itemMap){
 		StandardItem currentItem = null;
 		String fieldName = null;
 		if(parentName != null) {
 			logger.debug("$ findItem :: findItem="+ parentName);
-			currentItem = item.findItem(parentName, FIELD_SEPARATOR, ZERO_BASE_INDEX, true);
+			currentItem = message.findItem(parentName, FIELD_SEPARATOR, ZERO_BASE_INDEX, true);
 			if(currentItem == null) {
 				logger.debug("$ SKIP :: undefined path in StandardMessage node name="+ parentName);
 				return;
 			}			
 		}
-		if(root == null) {
+		if(currentNode == null) {
 			logger.debug("$ SKIP :: node is NULL name="+ parentName);
 			return;
 		}
 		
 		if( currentItem!=null && currentItem.getType() == StandardType.BIZDATA) {
-			logger.warn("BIZDATA1 : {}", root.toString());
-			logger.warn("BIZDATA2 : {}", root.asText());
-			String bizData = root.toString();
+			logger.warn("BIZDATA1 : {}", currentNode.toString());
+			logger.warn("BIZDATA2 : {}", currentNode.asText());
+			String bizData = currentNode.toString();
 			itemMap.put(parentName , bizData);
 	        currentItem.setValue(bizData);
-	        item.setBizData(bizData);
+//	        item.setBizData(bizData);
 	        return;
 		}
 		
-		switch(root.getNodeType()) {
+		switch(currentNode.getNodeType()) {
 			case OBJECT:
-				Iterator<String> fieldNames = root.fieldNames();
+				Iterator<String> fieldNames = currentNode.fieldNames();
 		        while(fieldNames.hasNext()) {
 		            fieldName = fieldNames.next();
-		            JsonNode fieldValue = root.get(fieldName);
+		            JsonNode fieldValue = currentNode.get(fieldName);
 		            fieldName = genPath(parentName, fieldName);
-		            traverse(item, fieldValue, fieldName, itemMap);
+		            traverse(message, fieldValue, fieldName, itemMap);
 		        }
 				break;
 			case ARRAY:
-				ArrayNode arrayNode = (ArrayNode) root;
+				ArrayNode arrayNode = (ArrayNode) currentNode;
 		        for(int i = 0; i < arrayNode.size(); i++) {
 		            JsonNode arrayElement = arrayNode.get(i);
-		            traverse(item, arrayElement, parentName+"["+ i+"]", itemMap);
+		            traverse(message, arrayElement, parentName+"["+ i+"]", itemMap);
 		        }
 				break;
 			default:
-				logger.debug("parsing : " + parentName + "=" +root.asText());
-		        itemMap.put(parentName , root.asText());
-		        currentItem.setValue(root.asText());
+				logger.debug("parsing : " + parentName + "=" +currentNode.asText());
+		        itemMap.put(parentName , currentNode.asText());
+		        currentItem.setValue(currentNode.asText());
 				break;				
 		}
 	}

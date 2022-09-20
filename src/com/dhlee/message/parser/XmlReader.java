@@ -58,15 +58,15 @@ public class XmlReader implements StandardReader {
 		return message;		
 	}
 	
-	private void traverse(StandardMessage item, org.dom4j.Element root, String parentName, LinkedHashMap<String, String> itemMap){
+	private void traverse(StandardMessage message, org.dom4j.Element currentNode, String parentName, LinkedHashMap<String, String> itemMap){
 		StandardItem currentItem = null;
 		String fullPath = null;
 		String fieldName = null;
-		if(root == null) {
+		if(currentNode == null) {
 			logger.debug("$ SKIP :: node is NULL name="+ parentName);
 			return;
 		}
-		Iterator<org.dom4j.Element> i = root.elementIterator();
+		Iterator<org.dom4j.Element> i = currentNode.elementIterator();
 		while (i.hasNext()) {
 			org.dom4j.Element child = (org.dom4j.Element) i.next();
 // if necessary, uncomment below 2 lines.
@@ -77,14 +77,14 @@ public class XmlReader implements StandardReader {
             fieldName = lastNodeName(fullPath);
             
             fieldName = genPath(parentName, fieldName);
-            currentItem = item.findItem(fieldName, FIELD_SEPARATOR, ZERO_BASE_INDEX, true);
+            currentItem = message.findItem(fieldName, FIELD_SEPARATOR, ZERO_BASE_INDEX, true);
             if(currentItem == null) continue;
             
             if(currentItem.getType() == StandardType.BIZDATA) {
     			String bizData = child.asXML();
     			itemMap.put(parentName , bizData);
     	        currentItem.setValue(bizData);
-    	        item.setBizData(bizData);
+//    	        item.setBizData(bizData);
     	        return;
     		}
             
@@ -101,11 +101,11 @@ public class XmlReader implements StandardReader {
                 			Attribute at = child.attribute(ai);
                 			String atPath = genPath(fieldName, at.getName());
                 			logger.debug("@ ATTRIBUTE name="+ atPath + ", fullPath="+ at.getUniquePath()+ ", value="+ at.getStringValue());
-                			StandardItem attrItem = item.findItem(atPath, FIELD_SEPARATOR, ZERO_BASE_INDEX, true);
+                			StandardItem attrItem = message.findItem(atPath, FIELD_SEPARATOR, ZERO_BASE_INDEX, true);
                 			itemMap.put(atPath, at.getStringValue());
                 			attrItem.setValue(at.getStringValue());
                 		}
-                		traverse(item, child, fieldName, itemMap);
+                		traverse(message, child, fieldName, itemMap);
                 	}
             		break;
             	case  Node.TEXT_NODE:

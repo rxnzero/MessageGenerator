@@ -193,10 +193,12 @@ public class StandardItem  implements Serializable, Cloneable {
 	}
 	public void setValue(String value) {
 		this.value = value;
-		try {
-			this.bytesValue = value.getBytes(encode);
-		} catch (UnsupportedEncodingException e) {
-			this.bytesValue = value.getBytes();
+		if(value  != null) { 
+			try {
+				this.bytesValue = value.getBytes(encode);
+			} catch (UnsupportedEncodingException e) {
+				this.bytesValue = value.getBytes();
+			}
 		}
 	}
 	

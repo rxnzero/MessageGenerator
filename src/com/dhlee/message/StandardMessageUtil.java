@@ -18,9 +18,11 @@ public class StandardMessageUtil {
 	public static StandardMessage generate(ArrayList<StandardItem> itemList) throws Exception {
 		StandardMessage message = new StandardMessage();
 		Stack<StandardItem> stack = new Stack<StandardItem>();
+		Stack<String> stackPath = new Stack<String>();
 		int pLevel = 0;
 		int arrayIndex = 0;
 		StandardItem parent = message;
+		String parentPath = null;
 //		logger.debug("======================================================");
 		for(int i=0; i< itemList.size(); i++) {
 			StandardItem item = itemList.get(i);
@@ -42,10 +44,12 @@ public class StandardMessageUtil {
 				}
 				else if( levelDiff == 1) {
 					parent = stack.pop();
+					parentPath = stackPath.pop();
 				}
 				else if(levelDiff < 0) {
 					for(int p=levelDiff; p<0; p++) {
 						parent = stack.pop();
+						parentPath = stackPath.pop();
 					}
 				}
 				else {
@@ -64,15 +68,33 @@ public class StandardMessageUtil {
 				}
 			}
 			
-			// group 老 版快 stack俊 历厘, pLevel 历厘
+			if(item.getType() == StandardType.BIZDATA) {
+				if(item.getLevel() == 1) {
+					message.setBizDataPath(item.getName());
+				}
+				else {
+					message.setBizDataPath(getFullPath(parentPath , item.getName()));
+				}
+				logger.debug("@@@ BIZ DATA PATH = " + message.getBizDataPath());
+			}
+			
+			// group/array 老 版快 stack俊 历厘, pLevel 历厘
 			if(item.getType() > 1) {
-				stack.push(item);				
+				stackPath.push( getFullPath(parentPath , item.getName()) );
+				stack.push(item);
 			}
 			pLevel = item.getLevel();
 		}
 		return message;
 	}
-
+	
+	private static String getFullPath(String parentPath, String itemName) {
+		if(parentPath == null || parentPath.length() == 0) {
+			return itemName;
+		}
+		return parentPath + "." + itemName;
+	}
+	
 	public static int getArrayIndex(String path) {
 		int index = -1;
 		

@@ -5,18 +5,39 @@ import java.util.LinkedHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author elink
+ *
+ */
 public class StandardMessage extends StandardItem{
 	private static final long serialVersionUID = 8250470942348479859L;
 	static Logger logger = LoggerFactory.getLogger(StandardMessage.class);
 	int readPosition = 0;
-	private String bizData = null;
+	private String bizDataPath = null;
 	
-	public String getBizData() {
-		return bizData;
+	public String getBizDataPath() {
+		return bizDataPath;
 	}
 
+	public void setBizDataPath(String bizDataPath) {
+		this.bizDataPath = bizDataPath;
+	}
+
+	public String getBizData() {
+		StandardItem bizItem = findItem(bizDataPath);
+		if(bizItem == null) {
+			return null;
+		}
+		else {
+			return bizItem.getValue();
+		}
+	}
+		
 	public void setBizData(String bizData) {
-		this.bizData = bizData;
+		StandardItem bizItem = findItem(bizDataPath);
+		if(bizItem != null) {
+			bizItem.setValue(bizData);
+		}
 	}
 
 	public StandardMessage() {

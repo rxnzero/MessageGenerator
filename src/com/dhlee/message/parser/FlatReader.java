@@ -72,7 +72,7 @@ public class FlatReader implements StandardReader {
 					traverse(message, item, srcbytes, null, itemMap);
 				}
 				break;
-			case 1:
+			case StandardType.FIELD:
 				item = message.findItem(fieldName, FIELD_SEPARATOR, ZERO_BASE_INDEX, true);
 				byte[] value = cut(fieldName, srcbytes, start, item.getLength());
 				item.setBytesValue(value);
@@ -81,7 +81,7 @@ public class FlatReader implements StandardReader {
 		        start = start + item.getLength();
 		        message.setReadPosition(start);
 				break;
-			case 2:
+			case StandardType.GROUP:
 				childList = currentItem.getChildsList();
 				for(int i=0; i<childList.size(); i++) {
 					item = childList.get(i);					
@@ -89,7 +89,7 @@ public class FlatReader implements StandardReader {
 			        traverse(message, item, srcbytes, fieldName, itemMap);
 				}
 				break;
-			case 3:
+			case StandardType.ARRAY:
 				int arraySize = currentItem.getLength();
 				for(int ai = 0; ai<arraySize; ai++) {
 					 LinkedHashMap<String, StandardItem> map = currentItem.getArrayChilds(ai, true);
@@ -104,6 +104,23 @@ public class FlatReader implements StandardReader {
 				        traverse(message, item, srcbytes, fieldName +"[" + ai +"]", itemMap);
 					}
 				}
+				break;
+			case StandardType.BIZDATA:
+				// FIX-ME : how to calculate bzi data size ?
+				//             current : bizData is last item in layout items (variable size)
+				item = message.findItem(fieldName, FIELD_SEPARATOR, ZERO_BASE_INDEX, true);
+				int bizDataSize = item.getLength();
+				if(bizDataSize == 0) {
+					bizDataSize = srcbytes.length - start;
+				}
+				byte[] bizDataBytes = cut(fieldName, srcbytes, start, bizDataSize);
+				
+				item.setBytesValue(bizDataBytes);
+				
+				itemMap.put(fieldName, item.getValue());
+				logger.debug("@FIELD path = {}, start={}, length={}, value=[{}]", fieldName, start, item.getLength(), item.getValue());
+		        start = start + bizDataSize;
+		        message.setReadPosition(start);
 				break;
 			default:
 				break;

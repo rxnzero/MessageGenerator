@@ -161,7 +161,7 @@ public class SrandardMessageTest {
 		item = new StandardItem("gitem2", 3, StandardType.FIELD, 10, 0, "20220905");
 		list.add(item);
 		
-		item = new StandardItem("bizData", 1, StandardType.BIZDATA, 1, 0, null);
+		item = new StandardItem("bizData", 1, StandardType.BIZDATA, 0, 0, null);
 		list.add(item);
 		
 		StandardMessage message = null;;
@@ -322,6 +322,9 @@ public class SrandardMessageTest {
 		logger.debug(">> message.toPrettyJson()=\n" + message.toPrettyJson());
 		logger.debug(">> message.toXML()=\n" + message.toXML());
 		logger.debug(">> message.toPrettyXML()=\n" + message.toPrettyXML());
+		
+		logger.debug(">> message.setBizData() to TESTSET-DATA");
+		message.setBizData("TESTSET-DATA");
 		logger.debug(">> message.toByteArray()=\n[" + new String(message.toByteArray()) +"]");
 		// Test getter after parsing
 		logger.debug("\n>> ----------------------------------------------------------------------------------");
@@ -419,7 +422,7 @@ public class SrandardMessageTest {
 		if( caseNumber == 1) {
 			testString ="000000000100000000020000000003KB100000000210000000022000000011100000001120000000113000000021100000002120000000213000000031100000003120000000313";
 			try {
-				testDynamicReader("com.dhlee.message.FlatReader", testString);
+				testDynamicReader("com.dhlee.message.parser.FlatReader", testString);
 			}
 			catch(Exception ex) {
 				logger.debug("success test : " + ex.toString());
@@ -430,17 +433,17 @@ public class SrandardMessageTest {
 		if( caseNumber == 2) {
 			testString ="000000000100000000020000000003KB1000000002100000000220000000111000000011200000001130000000211000000021200000002130000000311000000031";
 			try {
-				testDynamicReader("com.dhlee.message.FlatReader", testString);
+				testDynamicReader("com.dhlee.message.parser.FlatReader", testString);
 			}
 			catch(Exception ex) {
 				logger.debug("underflow test : " + ex.toString());
 			}
 		}
-		// overflow
+		// with bizData
 		if( caseNumber == 3) {
 			testString ="000000000100000000020000000003KB100000000210000000022000000011100000001120000000113000000021100000002120000000213000000031100000003120000000313ADDED";
 			try {
-				testDynamicReader("com.dhlee.message.FlatReader", testString);
+				testDynamicReader("com.dhlee.message.parser.FlatReader", testString);
 			}
 			catch(Exception ex) {
 				logger.debug("overflow test : " + ex.toString());
@@ -451,11 +454,11 @@ public class SrandardMessageTest {
 	public static void main(String[] args) throws Exception {
 //		testSimple();
 //		testJsonReader();
-//		testDynamicReader("com.dhlee.message.JsonReader", jsonString);
+//		testDynamicReader("com.dhlee.message.parser.JsonReader", jsonString);
 //		testXmlReader();
-		testDynamicReader("com.dhlee.message.XmlReader", xmlString);
+		testDynamicReader("com.dhlee.message.parser.XmlReader", xmlString);
 		
-//		testFlatReader(1);
+//		testFlatReader(3);
 		
 		// Json Case
 //		splitTest("Array[0].Group[0].gitem2", ".");
