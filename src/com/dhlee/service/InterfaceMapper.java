@@ -1,4 +1,4 @@
-package com.dhlee.test;
+package com.dhlee.service;
 
 import com.dhlee.message.StandardMessage;
 

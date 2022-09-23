@@ -1,4 +1,4 @@
-package com.dhlee.test;
+package com.dhlee.service;
 
 import com.dhlee.message.StandardItem;
 import com.dhlee.message.StandardMessage;
@@ -9,8 +9,20 @@ public class InterfaceMessage {
 	
 	private String interfaceCode;
 	private String interfaceType;
+	
+	//------------------------------------------------------------
+	// 표준전문과 Mapping 되는 항목을 모두 정의해야 함.
+	//------------------------------------------------------------
 	private String tranCode; // StandardMessage mapping field Header.StndCicsTrncd
 	
+	public String getTranCode() {
+		return mapper.getTranCode(standardMessage);
+	}
+
+	public void setTranCode(String tranCode) {
+		mapper.setTranCode(standardMessage, tranCode);
+	}
+	//------------------------------------------------------------
 	
 	public InterfaceMapper getMapper() {
 		return mapper;
@@ -42,14 +54,6 @@ public class InterfaceMessage {
 
 	public void setInterfaceType(String interfaceType) {
 		this.interfaceType = interfaceType;
-	}
-
-	public String getTranCode() {
-		return mapper.getTranCode(standardMessage);
-	}
-
-	public void setTranCode(String tranCode) {
-		mapper.setTranCode(standardMessage, tranCode);
 	}
 
 	public InterfaceMessage() {

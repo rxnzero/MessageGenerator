@@ -47,7 +47,6 @@ public class StandardMessageUtil {
 		Stack<StandardItem> stack = new Stack<StandardItem>();
 		Stack<String> stackPath = new Stack<String>();
 		int pLevel = 0;
-		int arrayIndex = 0;
 		StandardItem parent = message;
 		String parentPath = null;
 //		logger.debug("======================================================");

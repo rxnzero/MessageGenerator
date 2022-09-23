@@ -252,7 +252,6 @@ public class StandardItem  implements Serializable, Cloneable {
 			for(int p=0; p<list.size(); p++) {
 				LinkedHashMap<String , StandardItem> group = list.get(p);
 				Iterator<String> keyIter = group.keySet().iterator();
-				int i=0;
 				while(keyIter.hasNext()) {
 					String key = keyIter.next();
 					StandardItem item = group.get(key);
@@ -321,7 +320,6 @@ public class StandardItem  implements Serializable, Cloneable {
 	}
 	
 	protected String toJsonValue() {
-		StringBuilder sb = new StringBuilder();
 		if(dataType == 0) {
 			return "\"" + value + "\"";
 		}
@@ -468,12 +466,10 @@ public class StandardItem  implements Serializable, Cloneable {
 				sb.append(toStartTag(name));
 				
 				keyIter = childs.keySet().iterator();
-				int i=0;
 				while(keyIter.hasNext()) {
 					String key = keyIter.next();
 					StandardItem item = childs.get(key);
 					sb.append(item.toXML(encode, showPretty));
-					i++;
 				}
 				
 				if(showPretty) sb.append("\n");

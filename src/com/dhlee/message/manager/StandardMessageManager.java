@@ -5,13 +5,13 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dhlee.message.StandardMessage;
 import com.dhlee.message.StandardMessageUtil;
-import com.dhlee.message.parser.StandardReader;
-import com.dhlee.test.InterfaceMapper;
+import com.dhlee.service.InterfaceMapper;
 
 public class StandardMessageManager {
 	static Logger logger = LoggerFactory.getLogger(StandardMessageManager.class);
@@ -23,6 +23,8 @@ public class StandardMessageManager {
 	mapper.class=com.dhlee.test.TestInterfaceMapper
 	*/
 	public static String STANDARD_MESSAGE_CONFIG = "standard.message.config";
+	private String DEFAULT_CONFIG_PATH = "./resources/standard-message-config.properties";
+	
 	private String LAYOUT_FILE_TYPE = "layout.file.type";
 	private String LAYOUT_FILE_PATH = "layout.file.path";
 	private String MAPPER_CLASS = "mapper.class";
@@ -76,7 +78,6 @@ public class StandardMessageManager {
 				return;
 			}
 			logger.debug("mapperClass : {}", mapper.getClass().getCanonicalName());
-			
 		}
 		catch(Exception ex) {
 			ex.printStackTrace();
@@ -98,8 +99,8 @@ public class StandardMessageManager {
 	
 	private String getConfigFile() {
 		String configFilePath = System.getProperty(STANDARD_MESSAGE_CONFIG);
-		if (configFilePath == null) {
-			return "./resources/standard-message-config.properties"; 
+		if (StringUtils.isEmpty(configFilePath)) {
+			return DEFAULT_CONFIG_PATH; 
 		} else {
 			return configFilePath;
 		}
