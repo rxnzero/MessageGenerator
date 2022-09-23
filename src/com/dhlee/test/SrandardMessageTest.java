@@ -1,10 +1,15 @@
-package com.dhlee.message;
+package com.dhlee.test;
 
 import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.dhlee.message.StandardItem;
+import com.dhlee.message.StandardMessage;
+import com.dhlee.message.StandardMessageUtil;
+import com.dhlee.message.StandardType;
+import com.dhlee.message.manager.StandardMessageManager;
 import com.dhlee.message.parser.StandardReader;
 import com.dhlee.message.parser.XmlReader;
 
@@ -124,6 +129,13 @@ public class SrandardMessageTest {
 	}
 	
 	public static StandardMessage generateMessage() {
+//		return StandardMessageUtil.generateMessageFromCCsvFile();
+		StandardMessageManager manager = StandardMessageManager.getInstance();
+		return manager.getStandardMessage();
+	}
+	
+	
+	public static StandardMessage generateMessageFromItemList() {
 		// Test generator from List definition (with default values)
 		logger.debug("\n>> ----------------------------------------------------------------------------------");
 		logger.debug(">> Test generator from List definition ( with default values)");
@@ -168,7 +180,6 @@ public class SrandardMessageTest {
 		try {
 			message = StandardMessageUtil.generate(list);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
@@ -293,7 +304,7 @@ public class SrandardMessageTest {
 	
 	
 	public static void testDynamicReader(String readerClassName, String messageString) throws Exception {
-		StandardMessage message = null;;
+		StandardMessage message = null;
 		message = generateMessage();
 		if(message == null) {
 			return;

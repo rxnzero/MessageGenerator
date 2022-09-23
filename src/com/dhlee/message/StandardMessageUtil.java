@@ -8,9 +8,36 @@ import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.dhlee.message.layout.CsvFileReader;
+import com.dhlee.message.layout.LayoutReader;
+
 public class StandardMessageUtil {
 	static Logger logger = LoggerFactory.getLogger(StandardMessageUtil.class);
 	public StandardMessageUtil() {		
+	}
+	
+	public static StandardMessage generateMessageFromCCsvFile() {
+		String filePath = "./resources/standard-layout.csv";;
+		return generateMessageFromCCsvFile(filePath);
+	}
+	public static StandardMessage generateMessageFromCCsvFile(String filePath) {
+		ArrayList<StandardItem> list = null;
+//		String filePath = "./resources/standard-layout.csv";
+		try {
+			LayoutReader reader = new CsvFileReader();
+			list = (ArrayList<StandardItem>) reader.parse(filePath);
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+		StandardMessage message = null;;
+		try {
+			message = generate(list);			
+		} catch (Exception e) {
+			e.printStackTrace();			
+		}
+		return message;
 	}
 	
 	

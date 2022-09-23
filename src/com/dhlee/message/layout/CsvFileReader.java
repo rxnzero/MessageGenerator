@@ -9,33 +9,35 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.dhlee.message.SrandardMessageTest;
 import com.dhlee.message.StandardItem;
 import com.dhlee.message.StandardMessage;
 import com.dhlee.message.StandardMessageUtil;
 import com.dhlee.message.StandardType;
+import com.dhlee.test.SrandardMessageTest;
 
 public class CsvFileReader implements LayoutReader {
 	static Logger logger = LoggerFactory.getLogger(CsvFileReader.class);
 	String COMMA_DELIMITER = ",";
 	String COMMENT_HEADER = "#";
 	public CsvFileReader() {
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
 	public ArrayList<StandardItem> parse(String filePath) throws Exception {
+		logger.info("CsvFileReader read file = {} ", filePath);
+		
 		ArrayList<StandardItem>  list = new ArrayList<StandardItem>();
-		BufferedReader br = null;
+
 		int lineNo = 0;
-		try {
-			br = new BufferedReader(new FileReader(filePath));
+		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
 		    String line;
 		    while ((line = br.readLine()) != null) {
 		    	lineNo++;
 		    	if(line.startsWith(COMMENT_HEADER)) {
+		    		logger.debug("SKIP comment {} : {} ", lineNo, line);
 		    		continue;
 		    	}
+		    	logger.debug("Parsing line {} : {} ", lineNo, line);
 		        String[] values = line.split(COMMA_DELIMITER);
 		        StandardItem item = new StandardItem(values);		        
 	            list.add(item);
@@ -44,9 +46,6 @@ public class CsvFileReader implements LayoutReader {
 		catch(Exception ex) {
         	throw new Exception(String.format("csv file %s parsing error lineNo=%d", filePath, lineNo), ex);
         }
-		finally {
-			if(br != null) br.close();
-		}
 		return list;
 	}
 	
@@ -68,7 +67,6 @@ public class CsvFileReader implements LayoutReader {
 			logger.debug("@toString\n" + message.toString());
 			logger.debug("@toJson\n" + message.toJson());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();			
 		}
 	}
