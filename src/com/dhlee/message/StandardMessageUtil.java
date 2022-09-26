@@ -17,7 +17,7 @@ public class StandardMessageUtil {
 	}
 	
 	public static StandardMessage generateMessageFromCCsvFile() {
-		String filePath = "./resources/standard-layout.csv";;
+		String filePath = "./resources/standard-layout.csv";
 		return generateMessageFromCCsvFile(filePath);
 	}
 	public static StandardMessage generateMessageFromCCsvFile(String filePath) {

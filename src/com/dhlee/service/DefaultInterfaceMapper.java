@@ -7,6 +7,16 @@ public class DefaultInterfaceMapper implements InterfaceMapper {
 	//------------------------------------------------------------
 	// 표준전문과 Mapping 되는 항목을 모두 정의해야 함.
 	//------------------------------------------------------------
+	@Override
+	public String getEaiSvcCode(StandardMessage standardMessage) {
+		String eaiSvcCode = null;
+		String cicsTranCd = getTranCode(standardMessage);
+		// TODO : site에 맞게 조합해야 함.
+		eaiSvcCode = cicsTranCd +"S1";
+		return eaiSvcCode;
+	}
+
+	
 	private String tranCodePath = "Header.StndCicsTrncd"; // 표준전문에서의 항목 full.path
 	
 	@Override
@@ -25,6 +35,9 @@ public class DefaultInterfaceMapper implements InterfaceMapper {
 	public void setTranCodePath(String tranCodePath) {
 		this.tranCodePath = tranCodePath;
 	}
+	
+	
+
 	//------------------------------------------------------------
 	
 	public DefaultInterfaceMapper() {
@@ -44,6 +57,8 @@ public class DefaultInterfaceMapper implements InterfaceMapper {
 		if(item != null) item.setValue(value);
 		
 	}
+
+
 	
 	
 }

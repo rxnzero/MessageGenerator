@@ -3,6 +3,8 @@ package com.dhlee.message.manager;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -11,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.dhlee.message.StandardMessage;
 import com.dhlee.message.StandardMessageUtil;
+import com.dhlee.message.parser.StandardReader;
 import com.dhlee.service.InterfaceMapper;
 
 public class StandardMessageManager {
@@ -28,10 +31,12 @@ public class StandardMessageManager {
 	private String LAYOUT_FILE_TYPE = "layout.file.type";
 	private String LAYOUT_FILE_PATH = "layout.file.path";
 	private String MAPPER_CLASS = "mapper.class";
+	private String READER_PREFIX = "reader.";
 	
 	private StandardMessage standardMessage = null;
 	private InterfaceMapper mapper;
 	
+	private ConcurrentHashMap<String, StandardReader> readerMap = new ConcurrentHashMap<String, StandardReader>(); 
 	public StandardMessageManager() {
 		
 	}
@@ -58,6 +63,35 @@ public class StandardMessageManager {
 		}
     }
 	
+	private void initReaderFactory(Properties config) {
+		Class cl = null;
+		StandardReader reader = null;
+		
+		Set<Object> keys = config.keySet();
+		
+		for(Object key: keys) {
+			String keyStr = (String)key;
+			if(keyStr.startsWith(READER_PREFIX)) {
+				String name = keyStr.substring(READER_PREFIX.length());
+				String readerClassName = config.getProperty(keyStr);
+								
+				try {
+					cl = Class.forName(readerClassName);
+					reader = (StandardReader)cl.newInstance();
+				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+					logger.warn("Invalid Class path : {} {}", keyStr, readerClassName, e);
+					continue;
+				}				
+				readerMap.put(name, reader);
+				logger.warn("# Add Reader : {} {}", keyStr, readerClassName);
+			}
+		}
+	}
+	
+	public StandardReader getReader(String messageType) {
+		return readerMap.get(messageType);
+	}
+	
 	public void init() {
 		try {
 			Properties config = loadConfigFile();
@@ -68,6 +102,9 @@ public class StandardMessageManager {
 			
 			String mapperClass = config.getProperty(MAPPER_CLASS);
 			logger.debug("{} : {}", MAPPER_CLASS, mapperClass);
+			
+			initReaderFactory(config);
+			
 			Class cl = null;
 			try {
 				cl = Class.forName(mapperClass);

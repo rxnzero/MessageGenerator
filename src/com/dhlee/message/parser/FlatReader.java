@@ -19,7 +19,7 @@ public class FlatReader implements StandardReader {
 	private String FIELD_SEPARATOR = ".";
 	private boolean ZERO_BASE_INDEX = true;
 	
-	private String encoding = "euc-kr";;
+	private String encoding = "euc-kr";
 	
 	public FlatReader() {
 		 
@@ -54,7 +54,8 @@ public class FlatReader implements StandardReader {
 		return message;		
 	}
 	
-	private void traverse(StandardMessage message, StandardItem currentItem, byte[] srcbytes, String parentName, LinkedHashMap<String, String> itemMap){
+	private void traverse(StandardMessage message, StandardItem currentItem, byte[] srcbytes, String parentName
+			, LinkedHashMap<String, String> itemMap){
 		String fieldName = null;
 		ArrayList<StandardItem> childList = null;
 		StandardItem item = null;

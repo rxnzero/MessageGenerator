@@ -15,7 +15,8 @@ public class InterfaceTest {
 	}
 
 	public static void main(String[] args) throws Exception {
-		System.setProperty(StandardMessageManager.STANDARD_MESSAGE_CONFIG, "./resources/standard-message-config-test.properties");
+//		System.setProperty(StandardMessageManager.STANDARD_MESSAGE_CONFIG, "./resources/standard-message-config-test.properties");
+		System.setProperty(StandardMessageManager.STANDARD_MESSAGE_CONFIG, "./resources/standard-message-config.properties");
 		testInterfaceWithManager();		
 	}
 	
@@ -24,16 +25,23 @@ public class InterfaceTest {
 		StandardMessage standardMessage = manager.getStandardMessage();
 		InterfaceMapper mapper = manager.getMapper();
 		
+		
 		InterfaceMessage interfaceMessage = new InterfaceMessage();
 		interfaceMessage.setStandardMessage(standardMessage);
 		interfaceMessage.setMapper(mapper);
 		
-		logger.debug("standardMessage = {}",standardMessage.toPrettyJson());
-		logger.debug("getTranCode = {}",interfaceMessage.getTranCode());
+		logger.debug(">> Init.");
+		logger.debug("getTranCode = {}",interfaceMessage.getMapper().getTranCode(interfaceMessage.getStandardMessage()));
+		logger.debug("getEaiSvcCode = {}", interfaceMessage.getMapper().getEaiSvcCode(standardMessage));
+		logger.debug("standardMessage = {}",interfaceMessage.getStandardMessage().toPrettyJson());
 		
-		interfaceMessage.setTranCode("ELK");
-		logger.debug("standardMessage = {}",standardMessage.toPrettyJson());
-		logger.debug("getTranCode = {}",interfaceMessage.getTranCode());
+		String changed = "ELK";
+		logger.debug("\n>> Change : setTranCode = {}", changed);
+		interfaceMessage.getMapper().setTranCode(interfaceMessage.getStandardMessage(), changed);
+		logger.debug("getTranCode = {}",mapper.getTranCode(interfaceMessage.getStandardMessage()));
+		logger.debug("getEaiSvcCode = {}", interfaceMessage.getMapper().getEaiSvcCode(standardMessage));
+		logger.debug("standardMessage = {}",interfaceMessage.getStandardMessage().toPrettyJson());
+		
 		
 	}
 
