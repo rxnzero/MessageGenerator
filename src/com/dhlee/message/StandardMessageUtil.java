@@ -22,7 +22,7 @@ public class StandardMessageUtil {
 	}
 	public static StandardMessage generateMessageFromCCsvFile(String filePath) {
 		ArrayList<StandardItem> list = null;
-//		String filePath = "./resources/standard-layout.csv";
+
 		try {
 			LayoutReader reader = new CsvFileReader();
 			list = (ArrayList<StandardItem>) reader.parse(filePath);
@@ -31,7 +31,7 @@ public class StandardMessageUtil {
 			ex.printStackTrace();
 			return null;
 		}
-		StandardMessage message = null;;
+		StandardMessage message = null;
 		try {
 			message = generate(list);			
 		} catch (Exception e) {
@@ -52,7 +52,7 @@ public class StandardMessageUtil {
 //		logger.debug("======================================================");
 		for(int i=0; i< itemList.size(); i++) {
 			StandardItem item = itemList.get(i);
-//			logger.debug(String.format("%03d : item - %s", i, item) );
+//			logger.debug("{} : item - {}", i, item);
 			// 최상위일 경우 message에 저장
 			if(item.getLevel() == 0) {
 				message.setName(item.getName());
@@ -83,7 +83,7 @@ public class StandardMessageUtil {
 				}
 				
 				if(parent.getType() == StandardType.GROUP) {
-//					logger.debug("add group child item - " + item);
+//					logger.debug("add group child item - {}", item);
 					parent.addItem(item);
 				}
 				else if(parent.getType() == StandardType.ARRAY) {
@@ -101,7 +101,7 @@ public class StandardMessageUtil {
 				else {
 					message.setBizDataPath(getFullPath(parentPath , item.getName()));
 				}
-				logger.debug("@@@ BIZ DATA PATH = " + message.getBizDataPath());
+				logger.debug("@@@ BIZ DATA PATH = {}", message.getBizDataPath());
 			}
 			
 			// group/array 일 경우 stack에 저장, pLevel 저장

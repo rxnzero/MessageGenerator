@@ -1,6 +1,5 @@
 package com.dhlee.service;
 
-import com.dhlee.message.StandardItem;
 import com.dhlee.message.StandardMessage;
 
 public class InterfaceMessage {

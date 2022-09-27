@@ -3,8 +3,6 @@ package com.dhlee.message.layout;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,8 +10,6 @@ import org.slf4j.LoggerFactory;
 import com.dhlee.message.StandardItem;
 import com.dhlee.message.StandardMessage;
 import com.dhlee.message.StandardMessageUtil;
-import com.dhlee.message.StandardType;
-import com.dhlee.test.SrandardMessageTest;
 
 public class CsvFileReader implements LayoutReader {
 	static Logger logger = LoggerFactory.getLogger(CsvFileReader.class);

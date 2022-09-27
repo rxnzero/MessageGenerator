@@ -9,11 +9,12 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 import org.apache.commons.lang3.SerializationUtils;
-
-import com.fasterxml.jackson.databind.deser.ValueInstantiator.Gettable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
  
 public class StandardItem  implements Serializable, Cloneable {
 	private static final long serialVersionUID = -4430144517271735912L;
+	static Logger logger = LoggerFactory.getLogger(StandardItem.class);
 	LinkedHashMap<String , StandardItem> childs = new LinkedHashMap<String , StandardItem>();
 	ArrayList<LinkedHashMap<String , StandardItem>> list = new ArrayList<LinkedHashMap<String , StandardItem>>();
 
@@ -31,7 +32,7 @@ public class StandardItem  implements Serializable, Cloneable {
 	byte[] bytesValue = null;
 	
 	public StandardItem() {
-//		childs = new LinkedHashMap<String , StandardItem>();
+//		childs = new LinkedHashMap<String, StandardItem>();
 //		list = new ArrayList<StandardItem>();
 	}
 	
@@ -108,7 +109,7 @@ public class StandardItem  implements Serializable, Cloneable {
 			list.get(index).put(item.getName(), item);
 		}
 		else {
-			System.out.println("index too big :  index = "+ index +" / array size = "+ list.size());
+			logger.debug("index too big : index={} / array size={}", index, list.size());
 		}
 	}
 	public void addArray(LinkedHashMap<String , StandardItem> items) {
@@ -117,7 +118,7 @@ public class StandardItem  implements Serializable, Cloneable {
 	
 	public LinkedHashMap<String, StandardItem> getArrayChilds(int index, boolean createNew) {
 		if(index == list.size()) {
-//			System.out.println("@@ add cloned childs in array  item="+ this.name +", index = "+ index);
+//			logger.debug("@@ add cloned childs in array item={}, index={}", this.name, index);
 			if(createNew) {
 				list.add((LinkedHashMap<String , StandardItem>)(SerializationUtils.clone(childs)) );
 			}

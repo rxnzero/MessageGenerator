@@ -2,11 +2,8 @@ package com.dhlee.message.parser;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 
-import org.dom4j.Attribute;
-import org.dom4j.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
