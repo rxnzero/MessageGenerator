@@ -53,7 +53,7 @@ public class StandardMessageUtil {
 		for(int i=0; i< itemList.size(); i++) {
 			StandardItem item = itemList.get(i);
 //			logger.debug("{} : item - {}", i, item);
-			// 최상위일 경우 message에 저장
+			// top level
 			if(item.getLevel() == 0) {
 				message.setName(item.getName());
 				continue;
@@ -63,7 +63,7 @@ public class StandardMessageUtil {
 				message.addItem(item);
 			}
 			else {
-				// 상위를 얻어서 add
+				// get parent & add
 				int levelDiff = (item.getLevel() - pLevel);
 				if( levelDiff == 0) {
 					// do nothing
@@ -104,7 +104,7 @@ public class StandardMessageUtil {
 				logger.debug("@@@ BIZ DATA PATH = {}", message.getBizDataPath());
 			}
 			
-			// group/array 일 경우 stack에 저장, pLevel 저장
+			// if group/array,push to stack, pLevel
 			if(item.getType() > 1) {
 				stackPath.push( getFullPath(parentPath , item.getName()) );
 				stack.push(item);

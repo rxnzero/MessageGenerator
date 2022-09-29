@@ -23,7 +23,10 @@ public class StandardMessage extends StandardItem{
 		this.bizDataPath = bizDataPath;
 	}
 
-	public String getBizData() {
+	public String getBizData() throws Exception {
+		if(bizDataPath == null) {
+			throw new Exception("BizData path not configured, check layout definition.");
+		}
 		StandardItem bizItem = findItem(bizDataPath);
 		if(bizItem == null) {
 			return null;
@@ -33,7 +36,10 @@ public class StandardMessage extends StandardItem{
 		}
 	}
 		
-	public void setBizData(String bizData) {
+	public void setBizData(String bizData) throws Exception {
+		if(bizDataPath == null) {
+			throw new Exception("BizData path not configured, check layout definition.");
+		}
 		StandardItem bizItem = findItem(bizDataPath);
 		if(bizItem != null) {
 			bizItem.setValue(bizData);

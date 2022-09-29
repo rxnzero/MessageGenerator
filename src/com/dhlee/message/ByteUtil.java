@@ -8,7 +8,7 @@ public class ByteUtil {
         
         if (srcBytes.length < length) {
         	StringBuffer sb = new StringBuffer();
-        	sb.append("정의한 길이=" + length + ", 받은 길이=" + srcBytes.length);
+        	sb.append("item length=" + length + ", data length=" + srcBytes.length);
         	throw new RuntimeException(sb.toString());        	
         }
 
@@ -27,8 +27,8 @@ public class ByteUtil {
         
         if (srcBytes.length < (start+length)) {
         	StringBuffer sb = new StringBuffer();
-        	sb.append("item start index  =" + start + ", item length =" + length + ", total size =" + srcBytes.length);
-        	throw new RuntimeException(sb.toString());        	
+        	sb.append("item start index=" + start + ", item length=" + length + ", total size=" + srcBytes.length);
+        	throw new RuntimeException(sb.toString());
         }
 
         byte[] result = new byte[length];
