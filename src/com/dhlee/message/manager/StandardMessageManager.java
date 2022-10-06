@@ -2,6 +2,8 @@ package com.dhlee.message.manager;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,6 +33,7 @@ public class StandardMessageManager {
 	private String LAYOUT_FILE_TYPE = "layout.file.type";
 	private String LAYOUT_FILE_PATH = "layout.file.path";
 	private String MAPPER_CLASS = "mapper.class";
+	private String MAPPER_DEFINITION = "mapper.definition";
 	private String READER_PREFIX = "reader.";
 	
 	private StandardMessage standardMessage = null;
@@ -101,14 +104,18 @@ public class StandardMessageManager {
 			standardMessage = StandardMessageUtil.generateMessageFromCCsvFile(path);
 			
 			String mapperClass = config.getProperty(MAPPER_CLASS);
+			String mapperFilePath = config.getProperty(MAPPER_DEFINITION);
 			logger.debug("{} : {}", MAPPER_CLASS, mapperClass);
-			
+			logger.debug("{} : {}", MAPPER_DEFINITION, mapperFilePath);
 			initReaderFactory(config);
 			
 			Class cl = null;
 			try {
 				cl = Class.forName(mapperClass);
 				mapper = (InterfaceMapper)cl.newInstance();
+				Properties mapperMapPropties = loadFileProperties(mapperFilePath);
+				HashMap<String, String> map = propertyToMap(mapperMapPropties);				
+				mapper.initPathMap(map);
 				
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 				e.printStackTrace();
@@ -122,15 +129,27 @@ public class StandardMessageManager {
 		}
 	}
 	
+	private HashMap<String, String> propertyToMap(Properties prop) {
+	    HashMap<String, String> retMap = new HashMap<>();
+	    for (Map.Entry<Object, Object> entry : prop.entrySet()) {
+	        retMap.put(String.valueOf(entry.getKey()).trim(), String.valueOf(entry.getValue()).trim());
+	    }
+	    return retMap;
+	}
+	
 	private Properties loadConfigFile() throws Exception {
 		String configFile = getConfigFile();
-		logger.debug("configFile : {}", configFile);
+		return loadFileProperties(configFile);
+	}
+	
+	private Properties loadFileProperties(String filePath) throws Exception {
+		logger.debug("configFile : ", filePath);
 		Properties p = new Properties();
-		try(InputStream in = new FileInputStream(configFile)) {
+		try(InputStream in = new FileInputStream(filePath)) {
 			p.load(in);
 			return p;
 		} catch(Exception e) {
-			throw new Exception("StaandardMessageMangaer | Cannot load config file. - " + configFile, e);
+			throw new Exception("StandardMessageMangaer | Cannot load config file. - " + filePath, e);
 		}
 	}
 	
