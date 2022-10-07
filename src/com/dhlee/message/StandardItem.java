@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
  
@@ -22,14 +23,19 @@ public class StandardItem  implements Serializable, Cloneable {
 	// String <-> byte[] charset
 	String encode = "euc-kr";
 	
+	int ITEM_COUNT = 9;
 	String name;
 	int level; // 0 : root  ~ n
 	int type; // 0: Message, 1: Field, 2:Group 3, Array, 4 : BIZ DATA
 	int fieldType; // 0: ELEMENT, 1: ATTRIBUTE,
 	int length;
 	int dataType; // 0: String, 1: Number
+	String refPath;
+	String refValue;
 	String value;
+	
 	byte[] bytesValue = null;
+	
 	
 	public StandardItem() {
 //		childs = new LinkedHashMap<String, StandardItem>();
@@ -46,7 +52,19 @@ public class StandardItem  implements Serializable, Cloneable {
 		this.dataType = dataType;
 	}
 	
-	public StandardItem(String name, int level, int type, int fieldType, int length, int dataType) {
+	public StandardItem(String name, int level, int type, int length, int dataType, String refPath, String refValue) {
+		super();
+		this.name = name;
+		this.level = level;
+		this.type = type;
+		this.fieldType = 0;
+		this.length = length;
+		this.dataType = dataType;
+		this.refPath = refPath;
+		this.refValue = refValue;
+	}
+	
+	public StandardItem(String name, int level, int type, int fieldType, int length, int dataType, String refPath, String refValue) {
 		super();
 		this.name = name;
 		this.level = level;
@@ -54,6 +72,8 @@ public class StandardItem  implements Serializable, Cloneable {
 		this.fieldType = fieldType;
 		this.length = length;
 		this.dataType = dataType;
+		this.refPath = refPath;
+		this.refValue = refValue;
 	}
 	
 	public StandardItem(String name, int level, int type, int length, int dataType, String value) {
@@ -64,6 +84,19 @@ public class StandardItem  implements Serializable, Cloneable {
 		this.fieldType = 0;
 		this.length = length;
 		this.dataType = dataType;
+		setValue(value);
+	}
+	
+	public StandardItem(String name, int level, int type, int length, int dataType, String refPath, String refValue, String value) {
+		super();
+		this.name = name;
+		this.level = level;
+		this.type = type;
+		this.fieldType = 0;
+		this.length = length;
+		this.dataType = dataType;
+		this.refPath = refPath;
+		this.refValue = refValue;
 		setValue(value);
 	}
 	
@@ -78,9 +111,22 @@ public class StandardItem  implements Serializable, Cloneable {
 		setValue(value);
 	}
 	
+	public StandardItem(String name, int level, int type, int fieldType,  int length, int dataType, String refPath, String refValue, String value) {
+		super();
+		this.name = name;
+		this.level = level;
+		this.type = type;
+		this.fieldType = fieldType;
+		this.length = length;
+		this.dataType = dataType;
+		this.refPath = refPath;
+		this.refValue = refValue;
+		setValue(value);
+	}
+	
 	public StandardItem(String[] values) throws Exception {
-		if(values == null || values.length < 6) {
-			throw new Exception("invalid StandardItem defination values : " + values); 
+		if(values == null || values.length < ITEM_COUNT) {
+			throw new Exception("invalid StandardItem defination values : " + (values==null? "":values.length)); 
 		}		
 		this.name = values[0].trim();
 		this.level = Integer.parseInt(values[1].trim());
@@ -88,7 +134,9 @@ public class StandardItem  implements Serializable, Cloneable {
 		this.fieldType = Integer.parseInt(values[3].trim());
 		this.length = Integer.parseInt(values[4].trim());;
 		this.dataType = Integer.parseInt(values[5].trim());
-		if(values.length > 6) setValue(values[6]);
+		this.refPath = values[6].trim();
+		this.refValue = values[7].trim();
+		setValue(values[8]);
 	}
 	
 	public void addItem (StandardItem item) {
@@ -189,6 +237,23 @@ public class StandardItem  implements Serializable, Cloneable {
 	public void setDataType(int dataType) {
 		this.dataType = dataType;
 	}
+	
+	public String getRefPath() {
+		return refPath;
+	}
+
+	public void setRefPath(String refPath) {
+		this.refPath = refPath;
+	}
+
+	public String getRefValue() {
+		return refValue;
+	}
+
+	public void setRefValue(String refValue) {
+		this.refValue = refValue;
+	}
+
 	public String getValue() {
 		return value;
 	}
@@ -239,7 +304,9 @@ public class StandardItem  implements Serializable, Cloneable {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(getLevelTreeIndent()).append("StandardItem [name=" + name + ", level=" + level + ", type=" + type + ", fieldType=" + fieldType +", length=" + length + ", dataType=" + dataType
+		sb.append(getLevelTreeIndent()).append("StandardItem [name=" + name + ", level=" + level 
+				+ ", type=" + type + ", fieldType=" + fieldType +", length=" + length + ", dataType=" + dataType
+				+ ", refPath=" + refPath + ", refValue=" + refValue
 				+ ", value=" + value + "]");
 		if (type==0 || type==2) {
 			Iterator<String> keyIter = childs.keySet().iterator();
@@ -267,7 +334,7 @@ public class StandardItem  implements Serializable, Cloneable {
 		StringBuilder sb = new StringBuilder();
 		
 		if(level == 0) {
-			sb.append("#name,level,type,fieldType,llength,dataType,value\n");
+			sb.append("#name,level,type,fieldType,llength,dataType,refPath,refValue,value\n");
 		}
 		sb.append(name);
 		sb.append(",");
@@ -280,6 +347,10 @@ public class StandardItem  implements Serializable, Cloneable {
 		sb.append(length);
 		sb.append(",");
 		sb.append(dataType);
+		sb.append(",");
+		sb.append(refPath);
+		sb.append(",");
+		sb.append(refValue);
 		sb.append(",");
 		sb.append(value);
 		sb.append("\n");
@@ -346,12 +417,14 @@ public class StandardItem  implements Serializable, Cloneable {
 //			sb.append("\"").append( name ).append("\"").append(": {");
 			keyIter = childs.keySet().iterator();
 			int i=0;
+			String part = null;
 			while(keyIter.hasNext()) {
-				if(i>0) sb.append(",");
+				if(i>0 && StringUtils.isNotEmpty(part)) sb.append(",");
 				String key = keyIter.next();
 				StandardItem item = childs.get(key);
 				if(showPretty) sb.append("\n");
-				sb.append(item.toJson(showPretty));
+				part = item.toJson(showPretty);
+				sb.append(part);
 				i++;
 			}
 //			sb.append("}");
@@ -363,6 +436,10 @@ public class StandardItem  implements Serializable, Cloneable {
 			sb.append("\"").append(name).append("\":").append(toJsonValue());
 			break;
 		case StandardType.GROUP :
+			// skip variable group
+			if( getLength() == 0) {
+				break;
+			}
 			if(showPretty) sb.append(getLevelIndent());
 			sb.append("\"").append(name).append("\":{");
 			keyIter = childs.keySet().iterator();
@@ -492,6 +569,10 @@ public class StandardItem  implements Serializable, Cloneable {
 				}
 				break;
 			case StandardType.GROUP :
+				// skip variable group
+				if( getLength() == 0) {
+					break;
+				}
 				if(showPretty) {
 					sb.append("\n");
 					sb.append(getLevelIndent());
@@ -585,6 +666,10 @@ public class StandardItem  implements Serializable, Cloneable {
 		            }
 					break;
 				case StandardType.GROUP :
+					// skip variable group
+					if( getLength() == 0) {
+						break;
+					}
 					keyIter = childs.keySet().iterator();
 					while(keyIter.hasNext()) {
 						String key = keyIter.next();

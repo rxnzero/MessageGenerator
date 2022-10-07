@@ -433,10 +433,9 @@ public class SrandardMessageTest {
 			catch(Exception ex) {
 				logger.debug("success test : " + ex.toString());
 			}
-		}
-		
+		}		
 		// underflow
-		if( caseNumber == 2) {
+		else if( caseNumber == 2) {
 			testString ="000000000100000000020000000003KB1000000002100000000220000000111000000011200000001130000000211000000021200000002130000000311000000031";
 			try {
 				testDynamicReader("FLAT", testString);
@@ -446,8 +445,18 @@ public class SrandardMessageTest {
 			}
 		}
 		// with bizData
-		if( caseNumber == 3) {
+		else if( caseNumber == 3) {
 			testString ="000000000100000000020000000003KB100000000210000000022000000011100000001120000000113000000021100000002120000000213000000031100000003120000000313ADDED";
+			try {
+				testDynamicReader("FLAT", testString);
+			}
+			catch(Exception ex) {
+				logger.debug("overflow test : " + ex.toString());
+			}
+		}
+		// skip common
+		else if( caseNumber == 4) {
+			testString ="000000000Z00000000020000000003000000011100000001120000000113000000021100000002120000000213000000031100000003120000000313ADDED";
 			try {
 				testDynamicReader("FLAT", testString);
 			}
@@ -463,9 +472,10 @@ public class SrandardMessageTest {
 //		testJsonReader();
 //		testXmlReader();
 //		testFlatReader(3);
+		testFlatReader(4);
 		
 //		testDynamicReader("JSON", jsonString);
-		testDynamicReader("XML", xmlString);
+//		testDynamicReader("XML", xmlString);
 		
 		// Json Case
 //		splitTest("Array[0].Group[0].gitem2", ".");

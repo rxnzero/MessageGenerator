@@ -104,6 +104,9 @@ public class JsonReader implements StandardReader {
 		            fieldName = genPath(parentName, fieldName);
 		            traverse(message, fieldValue, fieldName, itemMap);
 		        }
+				if( currentItem.getLength() == 0) {
+					currentItem.setLength(1);
+				}
 				break;
 			case ARRAY:
 				ArrayNode arrayNode = (ArrayNode) currentNode;

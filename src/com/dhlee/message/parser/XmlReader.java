@@ -105,6 +105,9 @@ public class XmlReader implements StandardReader {
                 			itemMap.put(atPath, at.getStringValue());
                 			attrItem.setValue(at.getStringValue());
                 		}
+        				if( currentItem.getLength() == 0) {
+    						currentItem.setLength(1);
+        				}
                 		traverse(message, child, fieldName, itemMap);
                 	}
             		break;

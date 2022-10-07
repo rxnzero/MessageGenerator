@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,11 +81,29 @@ public class FlatReader implements StandardReader {
 		        message.setReadPosition(start);
 				break;
 			case StandardType.GROUP:
+				logger.debug("@GROUP name={}, getLength={}, getRefPath={}, getRefValue=[{}]"
+						, currentItem.getName(), currentItem.getLength(), currentItem.getRefPath(), currentItem.getRefValue());
+				if( currentItem.getLength() == 0 
+					&& StringUtils.isNoneEmpty(currentItem.getRefPath()) 
+					&& StringUtils.isNoneEmpty(currentItem.getRefValue()) ) {
+					String refItemValue = itemMap.get(currentItem.getRefPath());
+				
+					logger.debug("@GROUP name={}, getRefPath={}, refItemValue=[{}], getRefValue=[{}]"
+							, currentItem.getName(), currentItem.getRefPath(), refItemValue, currentItem.getRefValue());
+					
+					if( !currentItem.getRefValue().equals(refItemValue) ) {
+						logger.warn("@GROUP name={} SKIPPED.", currentItem.getName());
+							break;
+					}
+				}
 				childList = currentItem.getChildsList();
 				for(int i=0; i<childList.size(); i++) {
 					item = childList.get(i);					
 					logger.debug("@GROUP item={}, path = {}, start={}, length={}, value=[{}]", item.getName(), fieldName, start, item.getLength(), item.getValue());
 			        traverse(message, item, srcbytes, fieldName, itemMap);
+				}
+				if( currentItem.getLength() == 0) {
+						currentItem.setLength(1);
 				}
 				break;
 			case StandardType.ARRAY:

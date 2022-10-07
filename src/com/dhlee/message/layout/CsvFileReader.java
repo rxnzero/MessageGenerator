@@ -15,6 +15,8 @@ public class CsvFileReader implements LayoutReader {
 	static Logger logger = LoggerFactory.getLogger(CsvFileReader.class);
 	String COMMA_DELIMITER = ",";
 	String COMMENT_HEADER = "#";
+	int ITEM_COUNT = 9;
+	
 	public CsvFileReader() {
 	}
 	
@@ -34,7 +36,7 @@ public class CsvFileReader implements LayoutReader {
 		    		continue;
 		    	}
 		    	logger.debug("Parsing line {} : {} ", lineNo, line);
-		        String[] values = line.split(COMMA_DELIMITER);
+		        String[] values = line.split(COMMA_DELIMITER, ITEM_COUNT);
 		        StandardItem item = new StandardItem(values);		        
 	            list.add(item);
 		    }

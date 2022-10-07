@@ -18,6 +18,16 @@ public class InterfaceTest {
 //		System.setProperty(StandardMessageManager.STANDARD_MESSAGE_CONFIG, "./resources/standard-message-config-test.properties");
 		System.setProperty(StandardMessageManager.STANDARD_MESSAGE_CONFIG, "./resources/standard-message-config.properties");
 		testInterfaceWithManager();		
+//		String data = ",,2,,4";
+//		String[] sp = data.split(",", -1);
+//		
+//		System.out.println("DATA [" + data +"]");
+//		
+//		int index = 0;
+//		for(String item : sp) {
+//			System.out.println(index++ + " : " + item);
+//		}
+		
 	}
 	
 	public static void testInterfaceWithManager() {
@@ -41,8 +51,6 @@ public class InterfaceTest {
 		logger.debug("getTranCode = {}",mapper.getTranCode(interfaceMessage.getStandardMessage()));
 		logger.debug("getEaiSvcCode = {}", interfaceMessage.getMapper().getEaiSvcCode(standardMessage));
 		logger.debug("standardMessage = {}",interfaceMessage.getStandardMessage().toPrettyJson());
-		
-		
 	}
 
 }
