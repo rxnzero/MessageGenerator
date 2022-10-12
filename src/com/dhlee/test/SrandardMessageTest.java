@@ -66,6 +66,7 @@ public class SrandardMessageTest {
 			+"    \"bizfield2\":\"BIZ2\", " 
 			+"    \"bizfield3\":\"BIZ3\" " 
 			+"  }"
+			+"  ,\"FArray\": [\"STR1\", \"STR2\",\"STR3\"]"
 			+"}";
 	
 	static String xmlString = 
@@ -472,9 +473,9 @@ public class SrandardMessageTest {
 //		testJsonReader();
 //		testXmlReader();
 //		testFlatReader(3);
-		testFlatReader(4);
+//		testFlatReader(4);
 		
-//		testDynamicReader("JSON", jsonString);
+		testDynamicReader("JSON", jsonString);
 //		testDynamicReader("XML", xmlString);
 		
 		// Json Case

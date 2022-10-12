@@ -104,7 +104,7 @@ public class JsonReader implements StandardReader {
 		            fieldName = genPath(parentName, fieldName);
 		            traverse(message, fieldValue, fieldName, itemMap);
 		        }
-				if( currentItem.getLength() == 0) {
+				if(currentItem != null &&  currentItem.getLength() == 0) {
 					currentItem.setLength(1);
 				}
 				break;
@@ -118,8 +118,14 @@ public class JsonReader implements StandardReader {
 			default:
 				logger.debug("parsing : " + parentName + "=" +currentNode.asText());
 		        itemMap.put(parentName , currentNode.asText());
-		        currentItem.setValue(currentNode.asText());
-				break;				
+		        if(currentItem.getType() == StandardType.FARRAY) {
+		        	currentItem.addValue(currentNode.asText());
+		        }
+		        else {
+		        	currentItem.setValue(currentNode.asText());
+		        }
+				
+		        break;				
 		}
 	}
 

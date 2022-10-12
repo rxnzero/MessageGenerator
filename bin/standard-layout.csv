@@ -20,4 +20,5 @@ Item1                ,2,1,0,10,0,,,JI6H
 Group                ,2,3,0, 1,0,,,null
 gitem1               ,3,1,0,10,1,,,726
 gitem2               ,3,1,0,10,0,,,20220905
-bizData              ,1,4,0, 0,0,,,null
+FArray               ,1,4,0,10,0,,,null
+bizData              ,1,9,0, 0,0,,,null

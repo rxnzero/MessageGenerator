@@ -69,7 +69,7 @@ public class StandardMessage extends StandardItem{
 		StandardItem item = null;
 
 		LinkedHashMap<String , StandardItem> childItems = this.getChilds();
-		for(int i=0; i< paths.length; i++) {
+		for(int i=0; i < paths.length; i++) {
 			String itemName = paths[i];
 			int arrayIndex = StandardMessageUtil.getArrayIndex(itemName);
 			
@@ -87,8 +87,11 @@ public class StandardMessage extends StandardItem{
 				logger.error("get Child error : this=" + itemName, ex);		
 				return null;
 			}
-			if(i< paths.length-1) {
-				if(item != null && item.getType() >StandardType.FIELD) {
+			
+			logger.warn("findItem {} {} {}" , item!=null?item.getType(): -1, itemName, arrayIndex);		
+			
+			if(i < paths.length-1) {
+				if(item != null && item.getType() > StandardType.FIELD) {
 					if(arrayIndex >= 0) {
 						childItems = item.getArrayChilds(arrayIndex, createNew);
 					}

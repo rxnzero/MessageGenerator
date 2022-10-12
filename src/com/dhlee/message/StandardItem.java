@@ -18,7 +18,9 @@ public class StandardItem  implements Serializable, Cloneable {
 	static Logger logger = LoggerFactory.getLogger(StandardItem.class);
 	LinkedHashMap<String , StandardItem> childs = new LinkedHashMap<String , StandardItem>();
 	ArrayList<LinkedHashMap<String , StandardItem>> list = new ArrayList<LinkedHashMap<String , StandardItem>>();
-
+	
+	ArrayList<String> values = new ArrayList<String>();
+	
 	// FIX-ME : check encoding
 	// String <-> byte[] charset
 	String encode = "euc-kr";
@@ -26,7 +28,7 @@ public class StandardItem  implements Serializable, Cloneable {
 	int ITEM_COUNT = 9;
 	String name;
 	int level; // 0 : root  ~ n
-	int type; // 0: Message, 1: Field, 2:Group 3, Array, 4 : BIZ DATA
+	int type; // 0: Message, 1: Field, 2:Group,  3 : Array, 9 : BIZ DATA	
 	int fieldType; // 0: ELEMENT, 1: ATTRIBUTE,
 	int length;
 	int dataType; // 0: String, 1: Number
@@ -267,7 +269,11 @@ public class StandardItem  implements Serializable, Cloneable {
 			}
 		}
 	}
-	
+
+	public void addValue(String value) {
+		values.add(value);		
+	}
+
 	public byte[] getBytesValue() {
 		return bytesValue;
 	}
@@ -392,14 +398,17 @@ public class StandardItem  implements Serializable, Cloneable {
 	}
 	
 	protected String toJsonValue() {
+		return toJsonValue(this.value);
+	}
+	
+	protected String toJsonValue(String svalue) {
 		if(dataType == 0) {
-			return "\"" + value + "\"";
+			return "\"" + svalue + "\"";
 		}
 		else {
 			return value;
 		}
 	}
-	
 	public String toJson() {
 		return toJson(false);
 	}
@@ -497,6 +506,22 @@ public class StandardItem  implements Serializable, Cloneable {
 //			}
 			sb.append("]");
 			break;
+		case StandardType.FARRAY :
+			if(showPretty) {				
+				sb.append(getLevelIndent());
+			}
+			sb.append("\"").append(name).append("\":[");
+//			if(showPretty) sb.append("\n");
+			for(int p=0; p<values.size(); p++) {				
+				if(p>0) sb.append(",");
+				sb.append(toJsonValue(values.get(p)));
+			}
+//			if(showPretty) {
+//				sb.append("\n");
+//				sb.append(getLevelIndent());
+//			}
+			sb.append("]");
+			break;	
 		case StandardType.BIZDATA :
 			if(showPretty) sb.append(getLevelIndent());
 			sb.append("\"").append(name).append("\":").append(getValue());
@@ -625,6 +650,20 @@ public class StandardItem  implements Serializable, Cloneable {
 					sb.append(toEndTag(name));												
 				}
 				break;
+			case StandardType.FARRAY :
+				if(showPretty) {
+					sb.append(getLevelIndent());
+				}
+				for(int p=0; p<values.size(); p++) {
+					if(showPretty) { 
+						sb.append("\n");
+						sb.append(getLevelIndent());
+					}	
+					sb.append(toStartTag(name));
+					sb.append(values.get(p));
+					sb.append(toEndTag(name));												
+				}
+				break;	
 			case StandardType.BIZDATA :
 				if(showPretty) {
 					sb.append("\n");
@@ -688,6 +727,19 @@ public class StandardItem  implements Serializable, Cloneable {
 						}												
 					}
 					break;
+				case StandardType.FARRAY :			
+					for(int p=0; p<values.size(); p++) {					
+						if (values.get(p) == null) {
+			            	bos.write( new byte[getLength()] );	            	
+			            } else if (dataType == 0) {	            	
+			            	bos.write( ByteUtil.padding(values.get(p).getBytes(encode), getLength()) );
+			            } else if (dataType == 1) {
+			            	bos.write( ByteUtil.padding(values.get(p).getBytes(), getLength(), (byte)'0', true) );
+			            } else {	            	
+			            	bos.write( ByteUtil.padding(values.get(p).getBytes(encode), getLength()) );
+			            }												
+					}
+					break;	
 				case StandardType.BIZDATA :							
 					if (getValue() == null) {
 		            	bos.write( new byte[getLength()] );	            	

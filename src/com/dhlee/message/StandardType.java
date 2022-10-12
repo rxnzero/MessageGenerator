@@ -5,5 +5,6 @@ public interface StandardType {
 	int FIELD      = 1;
 	int GROUP    = 2;
 	int ARRAY    = 3;	
-	int BIZDATA = 4;
+	int FARRAY    = 4;
+	int BIZDATA = 9;
 }
