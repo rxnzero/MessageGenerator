@@ -495,7 +495,7 @@ public class StandardItem  implements Serializable, Cloneable {
 			if(showPretty) sb.append(getLevelIndent());
 			sb.append("\"").append(name).append("\":");
 			if(StringUtils.isEmpty(getValue())) {
-				sb.append("");
+				sb.append(toJsonValue(null));
 			}
 			else {
 				sb.append(getValue());

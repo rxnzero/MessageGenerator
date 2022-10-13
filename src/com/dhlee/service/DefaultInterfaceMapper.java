@@ -22,17 +22,16 @@ public class DefaultInterfaceMapper implements InterfaceMapper {
 	}
 
 	private String getItemValue(StandardMessage standardMessage, String path) {
-		if(standardMessage == null) return null;
+		if(standardMessage == null || path == null) return null;
 		return standardMessage.findItemValue(path);		
 	}
 
 	private void setItemValue(StandardMessage standardMessage, String path, String value) {
-		if(standardMessage == null) {
+		if(standardMessage == null || path == null) {
 			return;
 		}
 		StandardItem item = standardMessage.findItem(path);
-		if(item != null) item.setValue(value);
-		
+		if(item != null) item.setValue(value);		
 	}
 
 	//------------------------------------------------------------
@@ -46,8 +45,6 @@ public class DefaultInterfaceMapper implements InterfaceMapper {
 		eaiSvcCode = cicsTranCd +"S1";
 		return eaiSvcCode;
 	}
-
-	
 	
 	@Override
 	public String getTranCode(StandardMessage standardMessage) {
@@ -58,7 +55,6 @@ public class DefaultInterfaceMapper implements InterfaceMapper {
 	public void setTranCode(StandardMessage standardMessage, String tranCode) {
 		setItemValue(standardMessage,getPath(TRAN_CODE), tranCode);
 	}
-
 	//------------------------------------------------------------
 	
 	
