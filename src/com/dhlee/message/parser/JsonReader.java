@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,6 +98,19 @@ public class JsonReader implements StandardReader {
 		
 		switch(currentNode.getNodeType()) {
 			case OBJECT:
+				if( currentItem != null && currentItem.getSize() == 0 
+				&& StringUtils.isNoneEmpty(currentItem.getRefPath()) 
+				&& StringUtils.isNoneEmpty(currentItem.getRefValue()) ) {
+				String refItemValue = itemMap.get(currentItem.getRefPath());
+			
+				logger.debug("@GROUP name={}, getRefPath={}, refItemValue=[{}], getRefValue=[{}]"
+						, currentItem.getName(), currentItem.getRefPath(), refItemValue, currentItem.getRefValue());
+				
+				if( !currentItem.getRefValue().equals(refItemValue) ) {
+					logger.warn("@GROUP name={} SKIPPED.", currentItem.getName());
+						break;
+				}
+			}
 				Iterator<String> fieldNames = currentNode.fieldNames();
 		        while(fieldNames.hasNext()) {
 		            fieldName = fieldNames.next();
@@ -104,11 +118,26 @@ public class JsonReader implements StandardReader {
 		            fieldName = genPath(parentName, fieldName);
 		            traverse(message, fieldValue, fieldName, itemMap);
 		        }
-				if(currentItem != null &&  currentItem.getLength() == 0) {
-					currentItem.setLength(1);
+				if(currentItem != null &&  currentItem.getSize() == 0) {
+					currentItem.setSize(1);
 				}
 				break;
 			case ARRAY:
+				logger.debug("@ARRAY name={}, getLength={}, getRefPath={}, getRefValue=[{}]"
+						, currentItem.getName(), currentItem.getLength(), currentItem.getRefPath(), currentItem.getRefValue());
+				if( currentItem != null && currentItem.getSize() == 0 
+					&& StringUtils.isNoneEmpty(currentItem.getRefPath()) 
+					&& StringUtils.isNoneEmpty(currentItem.getRefValue()) ) {
+					String refItemValue = itemMap.get(currentItem.getRefPath());
+				
+					logger.debug("@ARRAY name={}, getRefPath={}, refItemValue=[{}], getRefValue=[{}]"
+							, currentItem.getName(), currentItem.getRefPath(), refItemValue, currentItem.getRefValue());
+					
+					if( !currentItem.getRefValue().equals(refItemValue) ) {
+						logger.warn("@ARRAY name={} SKIPPED.", currentItem.getName());
+							break;
+					}
+				}
 				ArrayNode arrayNode = (ArrayNode) currentNode;
 		        for(int i = 0; i < arrayNode.size(); i++) {
 		            JsonNode arrayElement = arrayNode.get(i);

@@ -4,6 +4,7 @@ import java.io.StringReader;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Attribute;
 import org.dom4j.DocumentException;
 import org.dom4j.Node;
@@ -96,6 +97,25 @@ public class XmlReader implements StandardReader {
             	        currentItem.setValue(child.getStringValue());
                 	}
                 	else {
+        				logger.debug("@GROUP name={}, getLength={}, getRefPath={}, getRefValue=[{}]"
+        						, currentItem.getName(), currentItem.getLength(), currentItem.getRefPath(), currentItem.getRefValue());
+        				if( currentItem.getSize() == 0 
+        					&& StringUtils.isNoneEmpty(currentItem.getRefPath()) 
+        					&& StringUtils.isNoneEmpty(currentItem.getRefValue()) ) {
+        					String refItemValue = null; 
+        					StandardItem refItem = message.findItem(currentItem.getRefPath(), ".", true, false);
+        					if(refItem != null) {
+        						refItemValue = refItem.getValue();
+        					}
+        				
+        					logger.debug("@GROUP name={}, getRefPath={}, refItemValue=[{}], getRefValue=[{}]"
+        							, currentItem.getName(), currentItem.getRefPath(), refItemValue, currentItem.getRefValue());
+        					
+        					if( !currentItem.getRefValue().equals(refItemValue) ) {
+        						logger.warn("@GROUP name={} SKIPPED.", currentItem.getName());
+        							break;
+        					}
+        				}
                 		int attrCnt = child.attributeCount();
                 		for (int ai=0; ai<attrCnt; ai++) {
                 			Attribute at = child.attribute(ai);
@@ -105,8 +125,8 @@ public class XmlReader implements StandardReader {
                 			itemMap.put(atPath, at.getStringValue());
                 			attrItem.setValue(at.getStringValue());
                 		}
-        				if( currentItem.getLength() == 0) {
-    						currentItem.setLength(1);
+        				if( currentItem.getSize() == 0) {
+    						currentItem.setSize(1);
         				}
                 		traverse(message, child, fieldName, itemMap);
                 	}

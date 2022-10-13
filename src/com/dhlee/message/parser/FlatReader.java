@@ -83,13 +83,15 @@ public class FlatReader implements StandardReader {
 			case StandardType.GROUP:
 				logger.debug("@GROUP name={}, getLength={}, getRefPath={}, getRefValue=[{}]"
 						, currentItem.getName(), currentItem.getLength(), currentItem.getRefPath(), currentItem.getRefValue());
-				if( currentItem.getLength() == 0 
+				if( currentItem.getSize() == 0 
 					&& StringUtils.isNoneEmpty(currentItem.getRefPath()) 
 					&& StringUtils.isNoneEmpty(currentItem.getRefValue()) ) {
 					String refItemValue = itemMap.get(currentItem.getRefPath());
 				
 					logger.debug("@GROUP name={}, getRefPath={}, refItemValue=[{}], getRefValue=[{}]"
 							, currentItem.getName(), currentItem.getRefPath(), refItemValue, currentItem.getRefValue());
+					
+					if(refItemValue != null) refItemValue = refItemValue.trim();
 					
 					if( !currentItem.getRefValue().equals(refItemValue) ) {
 						logger.warn("@GROUP name={} SKIPPED.", currentItem.getName());
@@ -102,11 +104,26 @@ public class FlatReader implements StandardReader {
 					logger.debug("@GROUP item={}, path = {}, start={}, length={}, value=[{}]", item.getName(), fieldName, start, item.getLength(), item.getValue());
 			        traverse(message, item, srcbytes, fieldName, itemMap);
 				}
-				if( currentItem.getLength() == 0) {
-						currentItem.setLength(1);
+				if( currentItem.getSize() == 0) {
+						currentItem.setSize(1);
 				}
 				break;
 			case StandardType.ARRAY:
+				logger.debug("@ARRAY name={}, getLength={}, getRefPath={}, getRefValue=[{}]"
+						, currentItem.getName(), currentItem.getLength(), currentItem.getRefPath(), currentItem.getRefValue());
+				if( currentItem.getSize() == 0 
+					&& StringUtils.isNoneEmpty(currentItem.getRefPath()) 
+					&& StringUtils.isNoneEmpty(currentItem.getRefValue()) ) {
+					String refItemValue = itemMap.get(currentItem.getRefPath());
+				
+					logger.debug("@ARRAY name={}, getRefPath={}, refItemValue=[{}], getRefValue=[{}]"
+							, currentItem.getName(), currentItem.getRefPath(), refItemValue, currentItem.getRefValue());
+					
+					if( !currentItem.getRefValue().equals(refItemValue) ) {
+						logger.warn("@ARRAY name={} SKIPPED.", currentItem.getName());
+							break;
+					}
+				}
 				int arraySize = currentItem.getLength();
 				for(int ai = 0; ai<arraySize; ai++) {
 					 LinkedHashMap<String, StandardItem> map = currentItem.getArrayChilds(ai, true);

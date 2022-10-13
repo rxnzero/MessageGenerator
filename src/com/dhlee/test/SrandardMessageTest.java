@@ -19,7 +19,7 @@ public class SrandardMessageTest {
 
 	static String jsonString = "{" 
 			+"  \"Header\": {" 
-			+"    \"StndCicsTrncd\":\"TEST\", " 
+			+"    \"StndCicsTrncd\":\"JI6H\", " 
 			+"    \"StndIntnlStndTelgmLen\":100, " 
 			+"    \"StndTranBaseYmd\":\"20220913\"" 
 			+"  }, " 
@@ -473,9 +473,9 @@ public class SrandardMessageTest {
 //		testJsonReader();
 //		testXmlReader();
 //		testFlatReader(3);
-//		testFlatReader(4);
+		testFlatReader(4);
 		
-		testDynamicReader("JSON", jsonString);
+//		testDynamicReader("JSON", jsonString);
 //		testDynamicReader("XML", xmlString);
 		
 		// Json Case
