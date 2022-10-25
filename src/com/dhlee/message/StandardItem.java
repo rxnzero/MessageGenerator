@@ -23,7 +23,7 @@ public class StandardItem  implements Serializable, Cloneable {
 	
 	// FIX-ME : check encoding
 	// String <-> byte[] charset
-	String encode = "euc-kr";
+	String encode = "utf-8";
 	
 	public static int ITEM_COUNT = 10;
 	String name;
@@ -523,11 +523,11 @@ public class StandardItem  implements Serializable, Cloneable {
 	}
 	
 	public String toXML() {
-		return toXML("utf-8", false);
+		return toXML(encode, false);
 	}
 	
 	public String toPrettyXML() {
-		return toXML("utf-8", true);
+		return toXML(encode, true);
 	}
 	
 	// FIX-ME : Attribute와 Element가 혼합된 Group/Array는 현재 처리 불가함.
@@ -644,9 +644,9 @@ public class StandardItem  implements Serializable, Cloneable {
 					sb.append("\n");
 					sb.append(getLevelIndent());
 				}
-//				sb.append(toStartTag(name));
+				sb.append(toStartTag(name));
 				sb.append(getValue());
-//				sb.append(toEndTag(name));
+				sb.append(toEndTag(name));
 				break;
 			default :
 				break;			

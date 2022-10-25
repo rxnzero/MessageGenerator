@@ -14,7 +14,7 @@ import com.dhlee.message.StandardType;
 
 public class FlatReader implements StandardReader {
 	static Logger logger = LoggerFactory.getLogger(FlatReader.class);
-	private String FIELD_SEPARATOR = ".";
+	private char FIELD_SEPARATOR = '.';
 	private boolean ZERO_BASE_INDEX = true;
 	
 	private String encoding = "euc-kr";

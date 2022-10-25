@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 
 public class JsonReader implements StandardReader {
 	static Logger logger = LoggerFactory.getLogger(JsonReader.class);
-	private String FIELD_SEPARATOR = ".";
+	private char FIELD_SEPARATOR = '.';
 	private boolean ZERO_BASE_INDEX = true;
 	
 	public JsonReader() {

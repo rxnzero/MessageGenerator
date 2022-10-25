@@ -241,7 +241,7 @@ public class SrandardMessageTest {
 		
 		// Test Dynamic Loading
 		StandardReader jsonReader = null;
-		String readerName = "com.dhlee.message.JsonReader";
+		String readerName = "com.dhlee.message.parser.JsonReader";
 		Class cl = null;
 		try {
 			cl = Class.forName(readerName);
@@ -471,9 +471,9 @@ public class SrandardMessageTest {
 //		testSimple();
 
 //		testJsonReader();
-//		testXmlReader();
+		testXmlReader();
 //		testFlatReader(3);
-		testFlatReader(4);
+//		testFlatReader(4);
 		
 //		testDynamicReader("JSON", jsonString);
 //		testDynamicReader("XML", xmlString);

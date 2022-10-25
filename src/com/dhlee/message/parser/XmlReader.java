@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Attribute;
 import org.dom4j.DocumentException;
+import org.dom4j.Element;
 import org.dom4j.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,9 +18,11 @@ import com.dhlee.message.StandardType;
 
 public class XmlReader implements StandardReader {
 	static Logger logger = LoggerFactory.getLogger(XmlReader.class);
-	private String FIELD_SEPARATOR = "/"; // XML use /
+	private char FIELD_SEPARATOR = '/'; // XML use /
 	private boolean ZERO_BASE_INDEX = false; // 1 base
-	
+
+	private boolean BIZDATA_NAME_INCLUDE = true;
+
 	public XmlReader() {
 		
 	}
@@ -59,6 +62,19 @@ public class XmlReader implements StandardReader {
 		return message;		
 	}
 	
+	private String getContent(org.dom4j.Element element) {
+	    if (element.isTextOnly())
+	        return element.getText();
+	    StringBuilder sb = new StringBuilder();
+	    Element currElement = null;
+	    Iterator<org.dom4j.Element> iterator = element.elementIterator();
+	    while( iterator.hasNext() ) {
+	        currElement = iterator.next();
+	        sb.append(currElement.asXML());
+	    }
+	    return sb.toString();
+	}
+	
 	private void traverse(StandardMessage message, org.dom4j.Element currentNode, String parentName, LinkedHashMap<String, String> itemMap){
 		StandardItem currentItem = null;
 		String fullPath = null;
@@ -82,8 +98,15 @@ public class XmlReader implements StandardReader {
             if(currentItem == null) continue;
             
             if(currentItem.getType() == StandardType.BIZDATA) {
-    			String bizData = child.asXML();
-    			itemMap.put(parentName , bizData);
+    			String bizData = null;
+            	if(BIZDATA_NAME_INCLUDE)
+    				bizData = getContent(child);
+            	else 
+            		bizData = child.asXML();
+            	
+//    			logger.warn("child.asXML() {}" , bizData);
+//    			logger.warn("child.getData() {}" , getContent(child));
+    			itemMap.put(fieldName , bizData);
     	        currentItem.setValue(bizData);
 //    	        item.setBizData(bizData);
     	        return;
@@ -103,7 +126,7 @@ public class XmlReader implements StandardReader {
         					&& StringUtils.isNoneEmpty(currentItem.getRefPath()) 
         					&& StringUtils.isNoneEmpty(currentItem.getRefValue()) ) {
         					String refItemValue = null; 
-        					StandardItem refItem = message.findItem(currentItem.getRefPath(), ".", true, false);
+        					StandardItem refItem = message.findItem(currentItem.getRefPath(), '.', true, false);
         					if(refItem != null) {
         						refItemValue = refItem.getValue();
         					}

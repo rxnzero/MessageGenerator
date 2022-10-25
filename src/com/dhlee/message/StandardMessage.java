@@ -1,6 +1,8 @@
 package com.dhlee.message;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,13 +61,35 @@ public class StandardMessage extends StandardItem{
 	}
 	
 	public StandardItem findItem(String path) {
-		return findItem(path, ".", true, false);
+		return findItem(path, '.', true, false);
 	}
 	
-	public StandardItem findItem(String path, String pathSeparator, boolean zeroBase, boolean createNew) {
-		String  separator = "["+ pathSeparator +"]";
+	private String[] spilt(String source, char spliter) {
+    	List<String> list = new ArrayList<String>();
+    	CharSequence chars = source;
+    	int start = 0, end = 0;
+    	for(int i=0; i<chars.length(); i++) {
+    		if(chars.charAt(i) == spliter) {
+    			end = i;
+    			list.add(chars.subSequence(start, end).toString());
+    			start = end+1;
+    			i = i+1;
+    		}
+    	}
+    	
+    	if(end == 0) {
+    		list.add(chars.toString());
+    	}
+    	else {
+    		list.add(chars.subSequence(start, chars.length()).toString());
+    	}
+    	
+    	return (String[])list.toArray(new String[0]);
+    }
+	
+	public StandardItem findItem(String path, char pathSeparator, boolean zeroBase, boolean createNew) {
 		
-		String[] paths = path.split(separator);
+		String[] paths = spilt(path, pathSeparator);
 		StandardItem item = null;
 
 		LinkedHashMap<String , StandardItem> childItems = this.getChilds();
