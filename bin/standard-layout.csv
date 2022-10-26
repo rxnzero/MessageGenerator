@@ -9,7 +9,7 @@
 ElinkHeader          ,0,0,1,0, 0,0,,,
 Header               ,1,2,1,1, 0,0,,,
 StndCicsTrncd        ,2,1,1,1,10,0,,,
-StndIntnlStndTelgmLen,2,1,1,1,10,1,,,0
+StndIntnlStndTelgmLen,2,1,1,1,10,11,,,0
 StndTranBaseYmd      ,2,1,1,1,10,0,,,
 Common               ,1,2,0,0, 0,0,Header.StndCicsTrncd,JI6H,null
 TranInfo             ,2,2,1,0, 0,0,,,
@@ -23,3 +23,4 @@ gitem1               ,3,1,1,0,10,1,,,726
 gitem2               ,3,1,1,0,10,0,,,20220905
 FArray               ,1,4,0,0,10,0,,,
 bizData              ,1,9,1,0, 0,0,,,
+zzData               ,1,1,1,0, 2,10,,,ZZ

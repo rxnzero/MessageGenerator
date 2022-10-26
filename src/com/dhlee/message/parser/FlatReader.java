@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.dhlee.message.StandardDataType;
 import com.dhlee.message.StandardItem;
 import com.dhlee.message.StandardMessage;
 import com.dhlee.message.StandardType;
@@ -73,6 +74,16 @@ public class FlatReader implements StandardReader {
 				break;
 			case StandardType.FIELD:
 				item = message.findItem(fieldName, FIELD_SEPARATOR, ZERO_BASE_INDEX, true);
+				if(item.getDataType() == StandardDataType.ZZ_STRING) {
+					start = start - item.getLength();
+					logger.debug("@FIELD path = {}, start={}, length={}, ZZ check start {}", fieldName, start, item.getLength(), item.getValue(), start);
+					// cut bizData
+					try {
+						message.cutBizData(item.getLength());
+					} catch (Exception e) {
+						logger.error("@FIELD path = {}, start={}, length={}, cutBizData Failed", fieldName, start, item.getLength(), e);
+					}
+				}
 				byte[] value = cut(fieldName, srcbytes, start, item.getLength());
 				item.setBytesValue(value);
 				itemMap.put(fieldName, item.getValue());

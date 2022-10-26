@@ -16,6 +16,8 @@ public class StandardMessage extends StandardItem{
 	static Logger logger = LoggerFactory.getLogger(StandardMessage.class);
 	int readPosition = 0;
 	private String bizDataPath = null;
+	private String llDataPath = null;
+	private String zzDataPath = null;
 	
 	public String getBizDataPath() {
 		return bizDataPath;
@@ -24,30 +26,120 @@ public class StandardMessage extends StandardItem{
 	public void setBizDataPath(String bizDataPath) {
 		this.bizDataPath = bizDataPath;
 	}
+	
+	public String getLlDataPath() {
+		return llDataPath;
+	}
 
+	public void setLlDataPath(String llDataPath) {
+		this.llDataPath = llDataPath;
+	}
+
+	public String getZzDataPath() {
+		return zzDataPath;
+	}
+
+	public void setZzDataPath(String zzDataPath) {
+		this.zzDataPath = zzDataPath;
+	}
+	
 	public String getBizData() throws Exception {
 		if(bizDataPath == null) {
-			throw new Exception("BizData path not configured, check layout definition.");
+			throw new Exception("bizDataPath path not configured, check layout definition.");
 		}
-		StandardItem bizItem = findItem(bizDataPath);
-		if(bizItem == null) {
+		StandardItem Item = findItem(bizDataPath);
+		if(Item == null) {
 			return null;
 		}
 		else {
-			return bizItem.getValue();
+			return Item.getValue();
 		}
 	}
 		
 	public void setBizData(String bizData) throws Exception {
 		if(bizDataPath == null) {
-			throw new Exception("BizData path not configured, check layout definition.");
+			throw new Exception("bizDataPath path not configured, check layout definition.");
 		}
-		StandardItem bizItem = findItem(bizDataPath);
-		if(bizItem != null) {
-			bizItem.setValue(bizData);
+		StandardItem Item = findItem(bizDataPath);
+		if(Item != null) {
+			Item.setValue(bizData);
 		}
 	}
-
+	
+	public void cutBizData(int zzSize) throws Exception {
+		if(bizDataPath == null) {
+			throw new Exception("bizDataPath path not configured, check layout definition.");
+		}
+		StandardItem Item = findItem(bizDataPath);
+		if(Item != null) {
+			byte[] bizDataBytes = Item.getBytesValue();
+			int finalSize = bizDataBytes.length - zzSize;
+			 
+			if(finalSize > 0) {
+				byte[] fbizDataBytes = new byte[finalSize];
+				for(int i=0; i<finalSize; i++) {
+					fbizDataBytes[i] = bizDataBytes[i];
+				}
+				Item.setBytesValue(fbizDataBytes);
+			}
+		}
+	}
+	
+	public String getLlData() throws Exception {
+		if(llDataPath == null) {
+			throw new Exception("llDataPath path not configured, check layout definition.");
+		}
+		StandardItem Item = findItem(llDataPath);
+		if(Item == null) {
+			return null;
+		}
+		else {
+			return Item.getValue();
+		}
+	}
+		
+	public void setLlData(String llData) throws Exception {
+		if(llDataPath == null) {
+			throw new Exception("llDataPath path not configured, check layout definition.");
+		}
+		StandardItem Item = findItem(llDataPath);
+		if(Item != null) {
+			Item.setValue(llData);
+		}
+	}
+	public void setLlData(int llDataSize) throws Exception {
+		if(llDataPath == null) {
+			throw new Exception("llDataPath path not configured, check layout definition.");
+		}
+		StandardItem bizItem = findItem(llDataPath);
+		if(bizItem != null) {
+			bizItem.setValue(Integer.toString(llDataSize));
+		}
+	}
+	
+	public String getZzData() throws Exception {
+		if(zzDataPath == null) {
+			throw new Exception("zzDataPath path not configured, check layout definition.");
+		}
+		StandardItem Item = findItem(zzDataPath);
+		if(Item == null) {
+			return null;
+		}
+		else {
+			return Item.getValue();
+		}
+	}
+		
+	public void setZzData(String zzData) throws Exception {
+		if(zzDataPath == null) {
+			throw new Exception("zzDataPath path not configured, check layout definition.");
+		}
+		StandardItem bizItem = findItem(zzDataPath);
+		if(bizItem != null) {
+			bizItem.setValue(zzData);
+		}
+	}
+		
 	public StandardMessage() {
 		this.name = "StandardRoot"; // XML 일 경우 Root name으로 사용 ?
 		this.type = 0; 

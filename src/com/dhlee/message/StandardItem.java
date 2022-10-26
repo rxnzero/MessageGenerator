@@ -32,7 +32,7 @@ public class StandardItem  implements Serializable, Cloneable {
 	int size; // array size
 	int fieldType; // 0: ELEMENT, 1: ATTRIBUTE,
 	int length;
-	int dataType; // 0: String, 1: Number
+	int dataType; // 0: String, 1: Number, 10: ZZ String, 11: Length Number
 	String refPath;
 	String refValue;
 	String value;

@@ -447,7 +447,7 @@ public class SrandardMessageTest {
 		}
 		// with bizData
 		else if( caseNumber == 3) {
-			testString ="000000000100000000020000000003KB100000000210000000022000000011100000001120000000113000000021100000002120000000213000000031100000003120000000313ADDED";
+			testString ="000000000100000000020000000003KB100000000210000000022000000011100000001120000000113000000021100000002120000000213000000031100000003120000000313ADDED@@";
 			try {
 				testDynamicReader("FLAT", testString);
 			}
@@ -471,8 +471,8 @@ public class SrandardMessageTest {
 //		testSimple();
 
 //		testJsonReader();
-		testXmlReader();
-//		testFlatReader(3);
+//		testXmlReader();
+		testFlatReader(3);
 //		testFlatReader(4);
 		
 //		testDynamicReader("JSON", jsonString);

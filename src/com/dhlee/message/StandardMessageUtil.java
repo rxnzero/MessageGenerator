@@ -109,6 +109,28 @@ public class StandardMessageUtil {
 				stackPath.push( getFullPath(parentPath , item.getName()) );
 				stack.push(item);
 			}
+			else {
+				if(item.getDataType() == StandardDataType.LL_NUMBER) {
+					if(item.getLevel() == 1) {
+						message.setLlDataPath(item.getName());
+					}
+					else {
+						message.setLlDataPath(getFullPath(parentPath , item.getName()));
+					}
+					logger.debug("@@@ LL_NUMBER PATH = {}", message.getLlDataPath());
+					
+				}
+				else if(item.getDataType() == StandardDataType.ZZ_STRING) {
+					if(item.getLevel() == 1) {
+						message.setZzDataPath(item.getName());
+					}
+					else {
+						message.setZzDataPath(getFullPath(parentPath , item.getName()));
+					}
+					logger.debug("@@@ ZZ_STRING PATH = {}", message.getZzDataPath());
+					
+				}
+			}
 			pLevel = item.getLevel();
 		}
 		return message;
