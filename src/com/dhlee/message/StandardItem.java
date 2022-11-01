@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
  
-public class StandardItem  implements Serializable, Cloneable {
+public class StandardItem implements Serializable, Cloneable {
 	private static final long serialVersionUID = -4430144517271735912L;
 	static Logger logger = LoggerFactory.getLogger(StandardItem.class);
 	LinkedHashMap<String , StandardItem> childs = new LinkedHashMap<String , StandardItem>();
@@ -23,7 +23,7 @@ public class StandardItem  implements Serializable, Cloneable {
 	
 	// FIX-ME : check encoding
 	// String <-> byte[] charset
-	String encode = "utf-8";
+	String encode = "euc-kr";
 	
 	public static int ITEM_COUNT = 10;
 	String name;
@@ -105,7 +105,7 @@ public class StandardItem  implements Serializable, Cloneable {
 			items.put(item.getName(), item);
 			list.add(items);
 		}
-		if(list.size() > index) {
+		else if(list.size() > index) {
 			list.get(index).put(item.getName(), item);
 		}
 		else {
@@ -126,7 +126,7 @@ public class StandardItem  implements Serializable, Cloneable {
 				return null;
 			}
 		}
-		if(index > list.size()) {
+		else if(index > list.size()) {
 			return null;
 		}
 		return list.get(index);
@@ -245,7 +245,7 @@ public class StandardItem  implements Serializable, Cloneable {
 		}
 	}
 	
-	private String getLevelIndent() {
+	protected String getLevelIndent() {
 		StringBuilder sb = new StringBuilder();
 		for(int i=0; i<level; i++) {
 			sb.append("  ");
@@ -253,7 +253,7 @@ public class StandardItem  implements Serializable, Cloneable {
 		return sb.toString();
 	}
 	
-	private String getLevelTreeIndent() {
+	protected String getLevelTreeIndent() {
 		StringBuilder sb = new StringBuilder();
 		if(level > 0) {
 			for(int i=0; i<level-1; i++) {
@@ -362,7 +362,7 @@ public class StandardItem  implements Serializable, Cloneable {
 	}
 	
 	protected String toJsonValue(String svalue) {
-		if(dataType == 0) {
+		if(dataType == StandardDataType.STRING || dataType == StandardDataType.ZZ_STRING) {
 			if(svalue == null) {
 				if(NULL_TO_SPACE) return "\"\""; 
 				else return null;
@@ -554,7 +554,7 @@ public class StandardItem  implements Serializable, Cloneable {
 				sb.append(toEndTag(name));
 				break;
 			case StandardType.FIELD :
-				if(fieldType == 0) {
+				if(fieldType == StandardFieldType.ELEMENT) {
 					if(showPretty) {
 						sb.append("\n");
 						sb.append(getLevelIndent());
@@ -671,9 +671,9 @@ public class StandardItem  implements Serializable, Cloneable {
 				case StandardType.FIELD :
 					if (getValue() == null) {
 		            	bos.write( new byte[getLength()] );	            	
-		            } else if (dataType == 0) {	            	
+		            } else if (dataType == StandardDataType.STRING || dataType == StandardDataType.ZZ_STRING) {	            	
 		            	bos.write( ByteUtil.padding(getBytesValue(), getLength()) );
-		            } else if (dataType == 1) {
+		            } else if (dataType == StandardDataType.LL_NUMBER || dataType == StandardDataType.NUMBER) {
 		            	bos.write( ByteUtil.padding(getValue(), getLength(), (byte)'0', true) );
 		            } else {	            	
 		            	bos.write( ByteUtil.padding(getBytesValue(), getLength()) );
@@ -706,9 +706,9 @@ public class StandardItem  implements Serializable, Cloneable {
 					for(int p=0; p<values.size(); p++) {					
 						if (values.get(p) == null) {
 			            	bos.write( new byte[getLength()] );	            	
-			            } else if (dataType == 0) {	            	
+			            } else if (dataType == StandardDataType.STRING || dataType == StandardDataType.ZZ_STRING) {	            	
 			            	bos.write( ByteUtil.padding(values.get(p).getBytes(encode), getLength()) );
-			            } else if (dataType == 1) {
+			            } else if (dataType == StandardDataType.NUMBER || dataType == StandardDataType.LL_NUMBER) {
 			            	bos.write( ByteUtil.padding(values.get(p).getBytes(), getLength(), (byte)'0', true) );
 			            } else {	            	
 			            	bos.write( ByteUtil.padding(values.get(p).getBytes(encode), getLength()) );
@@ -727,7 +727,7 @@ public class StandardItem  implements Serializable, Cloneable {
 			}		
 			return bos.toByteArray();
 		} catch(Exception e) {
-    		e.printStackTrace();
+    		logger.error("toByteArray failed", e);
     		return new byte[0];
     	}
     	finally {

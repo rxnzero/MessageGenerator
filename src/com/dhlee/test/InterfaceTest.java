@@ -50,7 +50,8 @@ public class InterfaceTest {
 		interfaceMessage.getMapper().setTranCode(interfaceMessage.getStandardMessage(), changed);
 		logger.debug("getTranCode = {}",mapper.getTranCode(interfaceMessage.getStandardMessage()));
 		logger.debug("getEaiSvcCode = {}", interfaceMessage.getMapper().getEaiSvcCode(standardMessage));
-		logger.debug("standardMessage = {}",interfaceMessage.getStandardMessage().toPrettyJson());
+		logger.debug("toPrettyJson = {}",interfaceMessage.getStandardMessage().toPrettyJson());
+		logger.debug("toPrettyXML = {}",interfaceMessage.getStandardMessage().toPrettyXML());
 	}
 
 }

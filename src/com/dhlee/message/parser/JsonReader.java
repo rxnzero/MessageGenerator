@@ -101,16 +101,16 @@ public class JsonReader implements StandardReader {
 				if( currentItem != null && currentItem.getSize() == 0 
 				&& StringUtils.isNoneEmpty(currentItem.getRefPath()) 
 				&& StringUtils.isNoneEmpty(currentItem.getRefValue()) ) {
-				String refItemValue = itemMap.get(currentItem.getRefPath());
-			
-				logger.debug("@GROUP name={}, getRefPath={}, refItemValue=[{}], getRefValue=[{}]"
-						, currentItem.getName(), currentItem.getRefPath(), refItemValue, currentItem.getRefValue());
+					String refItemValue = itemMap.get(currentItem.getRefPath());
 				
-				if( !currentItem.getRefValue().equals(refItemValue) ) {
-					logger.warn("@GROUP name={} SKIPPED.", currentItem.getName());
-						break;
+					logger.debug("@GROUP name={}, getRefPath={}, refItemValue=[{}], getRefValue=[{}]"
+							, currentItem.getName(), currentItem.getRefPath(), refItemValue, currentItem.getRefValue());
+					
+					if( !currentItem.getRefValue().equals(refItemValue) ) {
+						logger.warn("@GROUP name={} SKIPPED.", currentItem.getName());
+							break;
+					}
 				}
-			}
 				Iterator<String> fieldNames = currentNode.fieldNames();
 		        while(fieldNames.hasNext()) {
 		            fieldName = fieldNames.next();

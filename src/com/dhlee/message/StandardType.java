@@ -1,10 +1,10 @@
 package com.dhlee.message;
 
 public interface StandardType {
-	int MESSAGE = 0;
-	int FIELD      = 1;
-	int GROUP    = 2;
-	int ARRAY    = 3;	
-	int FARRAY    = 4;	
-	int BIZDATA = 9;
+	public final int MESSAGE = 0;
+	public final int FIELD      = 1;
+	public final int GROUP    = 2;
+	public final int ARRAY    = 3;	
+	public final int FARRAY    = 4;	
+	public final int BIZDATA = 9;
 }

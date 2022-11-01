@@ -1,6 +1,7 @@
 package com.dhlee.message;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -204,8 +205,6 @@ public class StandardMessage extends StandardItem{
 				return null;
 			}
 			
-			logger.warn("findItem {} {} {}" , item!=null?item.getType(): -1, itemName, arrayIndex);		
-			
 			if(i < paths.length-1) {
 				if(item != null && item.getType() > StandardType.FIELD) {
 					if(arrayIndex >= 0) {
@@ -238,10 +237,34 @@ public class StandardMessage extends StandardItem{
 	public String findItemValue(String path) {
 		StandardItem item = findItem(path);
 		if(item == null) {
+			logger.warn("Item Path not found {}", path);
 			return null;
 		}
 		else {
 			return item.getValue();
 		}
-	}	
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getLevelTreeIndent()).append("StandardMessage [name=" + name + ", level=" + level 
+				+ ", type=" + type 
+//				+", size=" + size + ", fieldType=" + fieldType +", length=" + length + ", dataType=" + dataType
+//				+ ", refPath=" + refPath + ", refValue=" + refValue
+//				+ ", value=" + value 
+				+ "]");
+		if(bizDataPath != null) sb.append(", bizDataPath=" + bizDataPath);
+		if(llDataPath != null) sb.append(", llDataPath=" + llDataPath);
+		if(zzDataPath != null) sb.append(", zzDataPath=" + zzDataPath);
+		
+		
+		Iterator<String> keyIter = childs.keySet().iterator();
+		while(keyIter.hasNext()) {
+			String key = keyIter.next();
+			StandardItem item = childs.get(key);
+			sb.append("\n").append(item.toString());
+		}
+		return sb.toString();
+	}
 }

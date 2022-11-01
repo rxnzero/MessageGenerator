@@ -252,6 +252,7 @@ public class SrandardMessageTest {
 		}
 		jsonReader.parse(message, jsonString);
 		
+		
 		logger.debug(">> message=\n" + message);
 		logger.debug(">> message.toJson()=\n" + message.toJson());
 		logger.debug(">> message.toPrettyJson()=\n" + message.toPrettyJson());
@@ -470,9 +471,9 @@ public class SrandardMessageTest {
 	public static void main(String[] args) throws Exception {
 //		testSimple();
 
-//		testJsonReader();
+		testJsonReader();
 //		testXmlReader();
-		testFlatReader(3);
+//		testFlatReader(3);
 //		testFlatReader(4);
 		
 //		testDynamicReader("JSON", jsonString);
