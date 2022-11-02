@@ -40,7 +40,26 @@ public class StandardItem implements Serializable, Cloneable {
 	byte[] bytesValue = null;
 	
 	// configuration options
-	boolean NULL_TO_SPACE = true;
+	// if data is null, convert to white-space
+	private static boolean NULL_TO_SPACE = true;
+	
+	// if add json root item with message name 
+	private static boolean ADD_JSON_ROOT = false;
+	
+	static {
+		try {
+			NULL_TO_SPACE = Boolean.parseBoolean( System.getProperty("standard.message.nulltospace", "true") );
+		}
+		catch(Exception ex) {
+			
+		}
+		try {
+			ADD_JSON_ROOT = Boolean.parseBoolean( System.getProperty("standard.message.addjsonroot", "fales") );
+		}
+		catch(Exception ex) {
+			
+		}
+	}
 	
 	public StandardItem() {
 //		childs = new LinkedHashMap<String, StandardItem>();
@@ -392,7 +411,8 @@ public class StandardItem implements Serializable, Cloneable {
 		case StandardType.MESSAGE :
 			sb.append("{");
 // if root name add			
-//			sb.append("\"").append( name ).append("\"").append(": {");
+			if(ADD_JSON_ROOT) sb.append("\"").append( name ).append("\"").append(":{");
+			if(showPretty) sb.append("\n");
 			keyIter = childs.keySet().iterator();
 			int i=0;
 			String part = null;
@@ -400,12 +420,12 @@ public class StandardItem implements Serializable, Cloneable {
 				if(i>0 && StringUtils.isNotEmpty(part)) sb.append(",");
 				String key = keyIter.next();
 				StandardItem item = childs.get(key);
-				if(showPretty) sb.append("\n");
+				if(showPretty && StringUtils.isNotEmpty(part)) sb.append("\n");
 				part = item.toJson(showPretty);
 				sb.append(part);
 				i++;
 			}
-//			sb.append("}");
+			if(ADD_JSON_ROOT) sb.append("}");
 			if(showPretty) sb.append("\n");
 			sb.append("}");
 			break;
