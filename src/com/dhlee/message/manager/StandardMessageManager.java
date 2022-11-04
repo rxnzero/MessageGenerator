@@ -118,7 +118,7 @@ public class StandardMessageManager {
 				mapper.initPathMap(map);
 				
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-				e.printStackTrace();
+				logger.error("configure {} : {}", mapperClass, MAPPER_DEFINITION, e);
 				return;
 			}
 			logger.debug("mapperClass : {}", mapper.getClass().getCanonicalName());
