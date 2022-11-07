@@ -119,6 +119,10 @@ public class XmlReader implements StandardReader {
                 		itemMap.put(fieldName , child.getStringValue());
             	        currentItem.setValue(child.getStringValue());
                 	}
+                	else if(currentItem.getType() == StandardType.FARRAY) {
+                		itemMap.put(fieldName , child.getStringValue());
+            	        currentItem.addValue(child.getStringValue());
+                	}
                 	else {
         				logger.debug("@GROUP name={}, getLength={}, getRefPath={}, getRefValue=[{}]"
         						, currentItem.getName(), currentItem.getLength(), currentItem.getRefPath(), currentItem.getRefValue());

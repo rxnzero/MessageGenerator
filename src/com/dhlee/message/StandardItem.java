@@ -250,7 +250,18 @@ public class StandardItem implements Serializable, Cloneable {
 	public void addValue(String value) {
 		values.add(value);		
 	}
-
+	
+	public void addBytesValue(byte[] bytesValue) {
+//		this.bytesValue = bytesValue;
+		String svalue = null;
+		try {
+			svalue = new String(bytesValue, encode);				
+		} catch (UnsupportedEncodingException e) {
+			svalue = new String(bytesValue);
+		}
+		addValue(svalue);
+	}
+	
 	public byte[] getBytesValue() {
 		return bytesValue;
 	}
@@ -693,7 +704,7 @@ public class StandardItem implements Serializable, Cloneable {
 		            	bos.write( new byte[getLength()] );	            	
 		            } else if (dataType == StandardDataType.STRING || dataType == StandardDataType.ZZ_STRING) {	            	
 		            	bos.write( ByteUtil.padding(getBytesValue(), getLength()) );
-		            } else if (dataType == StandardDataType.LL_NUMBER || dataType == StandardDataType.NUMBER) {
+		            } else if (dataType == StandardDataType.NUMBER || dataType == StandardDataType.LL_NUMBER) {
 		            	bos.write( ByteUtil.padding(getValue(), getLength(), (byte)'0', true) );
 		            } else {	            	
 		            	bos.write( ByteUtil.padding(getBytesValue(), getLength()) );

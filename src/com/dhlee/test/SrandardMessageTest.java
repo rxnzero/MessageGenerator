@@ -113,6 +113,9 @@ public class SrandardMessageTest {
 			+"<gitem2>20220915</gitem2>"
 		+"</Group>"
 		+"</Array>"
+		+"<FArray>STR1</FArray>"
+		+"<FArray>STR2</FArray>"
+		+"<FArray>STR3</FArray>"
 		+"<AddOn>"
 		+"<StndCicsTrncd>TEST</StndCicsTrncd>"
 		+"<StndIntnlStndTelgmLen>100</StndIntnlStndTelgmLen>"
@@ -472,8 +475,8 @@ public class SrandardMessageTest {
 //		testSimple();
 
 //		testJsonReader();
-//		testXmlReader();
-		testFlatReader(3);
+		testXmlReader();
+//		testFlatReader(3);
 //		testFlatReader(4);
 		
 //		testDynamicReader("JSON", jsonString);

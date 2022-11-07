@@ -39,7 +39,7 @@ public class FlatReader implements StandardReader {
 			srcbytes = flatString.getBytes();
 		}
 		
-		// make json map(path, value)
+		// make item map(path, value)
 		LinkedHashMap<String, String> itemMap = new LinkedHashMap<String, String>();
 		
 		traverse(message, message, srcbytes, null, itemMap);
@@ -73,7 +73,7 @@ public class FlatReader implements StandardReader {
 				}
 				break;
 			case StandardType.FIELD:
-				item = message.findItem(fieldName, FIELD_SEPARATOR, ZERO_BASE_INDEX, true);
+				item = currentItem; //message.findItem(fieldName, FIELD_SEPARATOR, ZERO_BASE_INDEX, true);
 				if(item.getDataType() == StandardDataType.ZZ_STRING) {
 					start = start - item.getLength();
 					logger.debug("@FIELD path = {}, start={}, length={}, ZZ check start {}", fieldName, start, item.getLength(), item.getValue(), start);
@@ -135,7 +135,7 @@ public class FlatReader implements StandardReader {
 							break;
 					}
 				}
-				int arraySize = currentItem.getLength();
+				int arraySize = currentItem.getSize();
 				for(int ai = 0; ai<arraySize; ai++) {
 					 LinkedHashMap<String, StandardItem> map = currentItem.getArrayChilds(ai, true);
 					if(map == null) {
@@ -148,6 +148,32 @@ public class FlatReader implements StandardReader {
 						logger.debug("@ARRAY parent path = {}, item={}, start={}, length={}, current value=[{}]", fieldName+"[" + ai +"]", item.getName(),  start, item.getLength(), item.getValue());
 				        traverse(message, item, srcbytes, fieldName +"[" + ai +"]", itemMap);
 					}
+				}
+				break;
+			case StandardType.FARRAY:
+				logger.debug("@FARRAY name={}, getLength={}, getRefPath={}, getRefValue=[{}]"
+						, currentItem.getName(), currentItem.getLength(), currentItem.getRefPath(), currentItem.getRefValue());
+				
+				int farraySize = currentItem.getSize();
+				item = currentItem; //message.findItem(fieldName, FIELD_SEPARATOR, ZERO_BASE_INDEX, true);
+				for(int ai = 0; ai<farraySize; ai++) {
+					if(item.getDataType() == StandardDataType.ZZ_STRING) {
+						start = start - item.getLength();
+						logger.debug("@FARRAY path = {}, start={}, length={}, ZZ check start {}", fieldName, start, item.getLength(), item.getValue(), start);
+						// cut bizData
+						try {
+							message.cutBizData(item.getLength());
+						} catch (Exception e) {
+							logger.error("@FARRAY path = {}, start={}, length={}, cutBizData Failed", fieldName, start, item.getLength(), e);
+						}
+					}
+					value = cut(fieldName, srcbytes, start, item.getLength());
+					item.addBytesValue(value);
+					
+					itemMap.put(fieldName, item.getValue());
+					logger.debug("@FARRAY path = {}, start={}, length={}, value=[{}]", fieldName, start, item.getLength(), item.getValue());
+			        start = start + item.getLength();
+			        message.setReadPosition(start);
 				}
 				break;
 			case StandardType.BIZDATA:
@@ -163,7 +189,7 @@ public class FlatReader implements StandardReader {
 				item.setBytesValue(bizDataBytes);
 				
 				itemMap.put(fieldName, item.getValue());
-				logger.debug("@FIELD path = {}, start={}, length={}, value=[{}]", fieldName, start, item.getLength(), item.getValue());
+				logger.debug("@BIZDATA path = {}, start={}, length={}, value=[{}]", fieldName, start, item.getLength(), item.getValue());
 		        start = start + bizDataSize;
 		        message.setReadPosition(start);
 				break;
