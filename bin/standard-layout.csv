@@ -1,6 +1,6 @@
 # comment start with #
 # level; // 0 : root  ~ n
-# type; // 0: Message, 1: Field, 2:Group 3, Array, 4 : Field Array, 9 : BIZ DATA
+# type; // 0: Message, 1: Field, 2:Group 3, GRID, 4 : Field Array, 9 : BIZ DATA
 # size // 0 : variable, > 0 fixed
 # fieldType; // 0: ELEMENT, 1: ATTRIBUTE,
 # length;

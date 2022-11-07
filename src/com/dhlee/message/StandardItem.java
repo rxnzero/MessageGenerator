@@ -467,7 +467,7 @@ public class StandardItem implements Serializable, Cloneable {
 			}
 			sb.append("}");
 			break;
-		case StandardType.ARRAY :
+		case StandardType.GRID :
 			if(showPretty) {				
 				sb.append(getLevelIndent());
 			}
@@ -632,7 +632,7 @@ public class StandardItem implements Serializable, Cloneable {
 					sb.append(" />");;
 				}
 				break;
-			case StandardType.ARRAY :
+			case StandardType.GRID :
 				if(showPretty) {
 					sb.append(getLevelIndent());
 				}
@@ -722,7 +722,7 @@ public class StandardItem implements Serializable, Cloneable {
 						bos.write(item.toByteArray());
 					}			
 					break;
-				case StandardType.ARRAY :			
+				case StandardType.GRID :			
 					for(int p=0; p<list.size(); p++) {					
 						LinkedHashMap<String , StandardItem> group = list.get(p);
 						keyIter = group.keySet().iterator();

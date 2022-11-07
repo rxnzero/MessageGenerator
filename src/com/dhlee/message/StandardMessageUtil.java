@@ -86,7 +86,7 @@ public class StandardMessageUtil {
 //					logger.debug("add group child item - {}", item);
 					parent.addItem(item);
 				}
-				else if(parent.getType() == StandardType.ARRAY) {
+				else if(parent.getType() == StandardType.GRID) {
 					parent.addArrayItem(0, item);
 				}
 				else {

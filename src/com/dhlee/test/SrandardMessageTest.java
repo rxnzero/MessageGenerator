@@ -166,11 +166,11 @@ public class SrandardMessageTest {
 		item = new StandardItem("StndPrcssRtdTranCd", 3, StandardType.FIELD, 10, 0, "");
 		list.add(item);
 		
-		group = new StandardItem("Array", 1, StandardType.ARRAY, 3, 0, null);
+		group = new StandardItem("Array", 1, StandardType.GRID, 3, 0, null);
 		list.add(group);
 		item = new StandardItem("Item1", 2, StandardType.FIELD, 10, 0, "JI6H");
 		list.add(item);
-		item = new StandardItem("Group", 2, StandardType.ARRAY, 1, 0, null);
+		item = new StandardItem("Group", 2, StandardType.GRID, 1, 0, null);
 		list.add(item);
 		item = new StandardItem("gitem1", 3, StandardType.FIELD, 10, 1, "726");
 		list.add(item);
@@ -474,8 +474,8 @@ public class SrandardMessageTest {
 	public static void main(String[] args) throws Exception {
 //		testSimple();
 
-//		testJsonReader();
-		testXmlReader();
+		testJsonReader();
+//		testXmlReader();
 //		testFlatReader(3);
 //		testFlatReader(4);
 		

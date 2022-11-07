@@ -119,19 +119,19 @@ public class FlatReader implements StandardReader {
 						currentItem.setSize(1);
 				}
 				break;
-			case StandardType.ARRAY:
-				logger.debug("@ARRAY name={}, getLength={}, getRefPath={}, getRefValue=[{}]"
+			case StandardType.GRID:
+				logger.debug("@GRID name={}, getLength={}, getRefPath={}, getRefValue=[{}]"
 						, currentItem.getName(), currentItem.getLength(), currentItem.getRefPath(), currentItem.getRefValue());
 				if( currentItem.getSize() == 0 
 					&& StringUtils.isNoneEmpty(currentItem.getRefPath()) 
 					&& StringUtils.isNoneEmpty(currentItem.getRefValue()) ) {
 					String refItemValue = itemMap.get(currentItem.getRefPath());
 				
-					logger.debug("@ARRAY name={}, getRefPath={}, refItemValue=[{}], getRefValue=[{}]"
+					logger.debug("@GRID name={}, getRefPath={}, refItemValue=[{}], getRefValue=[{}]"
 							, currentItem.getName(), currentItem.getRefPath(), refItemValue, currentItem.getRefValue());
 					
 					if( !currentItem.getRefValue().equals(refItemValue) ) {
-						logger.warn("@ARRAY name={} SKIPPED.", currentItem.getName());
+						logger.warn("@GRID name={} SKIPPED.", currentItem.getName());
 							break;
 					}
 				}
