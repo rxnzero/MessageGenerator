@@ -302,24 +302,43 @@ public class StandardItem implements Serializable, Cloneable {
 				+ ", type=" + type +", size=" + size + ", fieldType=" + fieldType +", length=" + length + ", dataType=" + dataType
 				+ ", refPath=" + refPath + ", refValue=" + refValue
 				+ ", value=" + value + "]");
-		if (type==0 || type==2) {
-			Iterator<String> keyIter = childs.keySet().iterator();
-			while(keyIter.hasNext()) {
-				String key = keyIter.next();
-				StandardItem item = childs.get(key);
-				sb.append("\n").append(item.toString());
-			}
-		}
-		else if(type ==3) {
-			for(int p=0; p<list.size(); p++) {
-				LinkedHashMap<String , StandardItem> group = list.get(p);
-				Iterator<String> keyIter = group.keySet().iterator();
+		Iterator<String> keyIter = null;;
+		switch(getType())  {
+			case StandardType.MESSAGE :
+				keyIter = childs.keySet().iterator();
 				while(keyIter.hasNext()) {
 					String key = keyIter.next();
-					StandardItem item = group.get(key);
+					StandardItem item = childs.get(key);
 					sb.append("\n").append(item.toString());
-				}				
-			}
+				}
+				break;
+//			case StandardType.FIELD :
+//				break;
+			case StandardType.GROUP :
+				keyIter = childs.keySet().iterator();
+				while(keyIter.hasNext()) {
+					String key = keyIter.next();
+					StandardItem item = childs.get(key);
+					sb.append("\n").append(item.toString());
+				}
+				break;
+			case StandardType.GRID :
+				for(int p=0; p<list.size(); p++) {
+					LinkedHashMap<String , StandardItem> group = list.get(p);
+					keyIter = group.keySet().iterator();
+					while(keyIter.hasNext()) {
+						String key = keyIter.next();
+						StandardItem item = group.get(key);
+						sb.append("\n").append(item.toString());
+					}				
+				}
+				break;
+//			case StandardType.FARRAY :
+//				break;
+//			case StandardType.BIZDATA :
+//				break;
+			default :
+				break;
 		}
 		return sb.toString();
 	}
@@ -361,28 +380,40 @@ public class StandardItem implements Serializable, Cloneable {
 	
 	public ArrayList<StandardItem> toList() {
 		ArrayList<StandardItem> list = new ArrayList<StandardItem>();
-		if(this.type == 0) {
-			ArrayList<StandardItem> childList = new ArrayList<StandardItem>(childs.values());
-			for(int i=0; i<childList.size(); i++) {
-				list.addAll(childList.get(i).toList());
-			}
-		}
-		else if(this.type == 1) {
-			list.add(this);			
-		}
-		else if(this.type == 2) {
-			list.add(this);
-			ArrayList<StandardItem> childList = new ArrayList<StandardItem>(childs.values());
-			for(int i=0; i<childList.size(); i++) {
-				list.addAll(childList.get(i).toList());
-			}
-		}
-		else if(this.type == 3) {
-			list.add(this);
-			ArrayList<StandardItem> childList = new ArrayList<StandardItem>(childs.values());
-			for(int i=0; i<childList.size(); i++) {
-				list.addAll(childList.get(i).toList());
-			}
+		ArrayList<StandardItem> childList = null;
+		switch(getType())  {
+			case StandardType.MESSAGE :
+				list.add(this);
+				childList = new ArrayList<StandardItem>(childs.values());
+				for(int i=0; i<childList.size(); i++) {
+					list.addAll(childList.get(i).toList());
+				}
+				break;
+			case StandardType.FIELD :
+				list.add(this);
+				break;
+			case StandardType.GROUP :
+				list.add(this);
+				childList = new ArrayList<StandardItem>(childs.values());
+				for(int i=0; i<childList.size(); i++) {
+					list.addAll(childList.get(i).toList());
+				}
+				break;
+			case StandardType.GRID :
+				list.add(this);
+				childList = new ArrayList<StandardItem>(childs.values());
+				for(int i=0; i<childList.size(); i++) {
+					list.addAll(childList.get(i).toList());
+				}
+				break;
+			case StandardType.FARRAY :
+				list.add(this);
+				break;
+			case StandardType.BIZDATA :
+				list.add(this);
+				break;
+			default :
+				break;
 		}
 		return list;
 	}

@@ -2,6 +2,7 @@ package com.dhlee.message.layout;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import org.slf4j.Logger;
@@ -19,6 +20,28 @@ public class CsvFileReader implements LayoutReader {
 	public CsvFileReader() {
 	}
 	
+	private BufferedReader getReader(String filePath) throws Exception {
+		BufferedReader reader = null;
+		logger.info("getReader from filepath. read file = {} ", filePath);
+		try {
+			reader = new BufferedReader(new FileReader(filePath));
+			return reader;
+		}
+		catch(Exception ex) {
+			logger.warn("getReader failed. read file = {} ", filePath, ex);
+		}
+		try {
+			logger.info("getReader from classpath. read file = {} ", filePath);
+			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+			reader = new BufferedReader(new InputStreamReader(classLoader.getResourceAsStream(filePath)) );			
+			return reader;
+		}
+		catch(Exception ex) {
+			logger.warn("getReader failed. read classpath file = {} ", filePath, ex);
+		}
+		throw new Exception("find not found : " + filePath);
+	}
+	
 	@Override
 	public ArrayList<StandardItem> parse(String filePath) throws Exception {
 		logger.info("CsvFileReader read file = {} ", filePath);
@@ -26,7 +49,7 @@ public class CsvFileReader implements LayoutReader {
 		ArrayList<StandardItem>  list = new ArrayList<StandardItem>();
 
 		int lineNo = 0;
-		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+		try (BufferedReader br = getReader(filePath)) {
 		    String line;
 		    while ((line = br.readLine()) != null) {
 		    	lineNo++;

@@ -474,9 +474,9 @@ public class SrandardMessageTest {
 	public static void main(String[] args) throws Exception {
 //		testSimple();
 
-		testJsonReader();
+//		testJsonReader();
 //		testXmlReader();
-//		testFlatReader(3);
+		testFlatReader(3);
 //		testFlatReader(4);
 		
 //		testDynamicReader("JSON", jsonString);

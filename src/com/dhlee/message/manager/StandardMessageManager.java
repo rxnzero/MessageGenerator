@@ -28,7 +28,8 @@ public class StandardMessageManager {
 	mapper.class=com.dhlee.test.TestInterfaceMapper
 	*/
 	public static String STANDARD_MESSAGE_CONFIG = "standard.message.config";
-	private String DEFAULT_CONFIG_PATH = "./resources/standard-message-config.properties";
+	private String DEFAULT_CONFIG_PATH = "./resources/";
+	private String DEFAULT_CONFIG_FILE = "standard-message-config.properties";
 	
 	private String LAYOUT_FILE_TYPE = "layout.file.type";
 	private String LAYOUT_FILE_PATH = "layout.file.path";
@@ -113,7 +114,7 @@ public class StandardMessageManager {
 			try {
 				cl = Class.forName(mapperClass);
 				mapper = (InterfaceMapper)cl.newInstance();
-				Properties mapperMapPropties = loadFileProperties(mapperFilePath);
+				Properties mapperMapPropties = loadConfigFileProperties(mapperFilePath);
 				HashMap<String, String> map = propertyToMap(mapperMapPropties);				
 				mapper.initPathMap(map);
 				
@@ -139,7 +140,18 @@ public class StandardMessageManager {
 	
 	private Properties loadConfigFile() throws Exception {
 		String configFile = getConfigFile();
-		return loadFileProperties(configFile);
+		return loadConfigFileProperties(configFile);
+	}
+	
+	private Properties loadConfigFileProperties(String configFile) throws Exception {
+		try {
+			return loadFileProperties(configFile);
+		}
+		catch(Exception e) {
+			logger.warn("StandardMessageManager | loadFileProperties failed. - " + configFile, e);
+		}
+		// try classpath file
+		return loadClassPathProperties(configFile);
 	}
 	
 	private Properties loadFileProperties(String filePath) throws Exception {
@@ -149,14 +161,36 @@ public class StandardMessageManager {
 			p.load(in);
 			return p;
 		} catch(Exception e) {
-			throw new Exception("StandardMessageMangaer | Cannot load config file. - " + filePath, e);
+			throw new Exception("StandardMessageManager | Cannot load config file. - " + filePath, e);
+		}
+	}
+	
+	private Properties loadClassPathProperties(String filePath) throws Exception {
+		Properties p = new Properties();
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		
+		logger.warn("StandardMessageManager | ClassLoader : load . - "+ filePath);
+		try( InputStream in = classLoader.getResourceAsStream(filePath) ) {
+			p.load(in);
+			return p;
+		} catch(Exception e) {
+			logger.warn("StandardMessageManager | ClassLoader : Cannot load config file. - " + filePath, e);
+		}
+
+		logger.warn("StandardMessageManager | ClassLoader : load default - "+ DEFAULT_CONFIG_FILE);
+		try( InputStream in = classLoader.getResourceAsStream(DEFAULT_CONFIG_FILE) ) {
+			p.load(in);
+			return p;
+		} catch(Exception e) {
+			logger.error("StandardMessageManager | ClassLoader : Cannot load default config file. - " + DEFAULT_CONFIG_FILE, e);
+			throw new Exception("StandardMessageManager | ClassLoader : Cannot load default config file. - " + filePath, e);
 		}
 	}
 	
 	private String getConfigFile() {
 		String configFilePath = System.getProperty(STANDARD_MESSAGE_CONFIG);
 		if (StringUtils.isEmpty(configFilePath)) {
-			return DEFAULT_CONFIG_PATH; 
+			return DEFAULT_CONFIG_PATH + DEFAULT_CONFIG_FILE; 
 		} else {
 			return configFilePath;
 		}
