@@ -9,6 +9,8 @@ import com.dhlee.message.StandardItem;
 import com.dhlee.message.StandardMessage;
 import com.dhlee.message.StandardMessageUtil;
 import com.dhlee.message.StandardType;
+import com.dhlee.message.filter.FlatMessageFilter;
+import com.dhlee.message.filter.MessageFilter;
 import com.dhlee.message.manager.StandardMessageManager;
 import com.dhlee.message.parser.StandardReader;
 import com.dhlee.message.parser.XmlReader;
@@ -135,7 +137,11 @@ public class SrandardMessageTest {
 	public static StandardMessage generateMessage() {
 //		return StandardMessageUtil.generateMessageFromCCsvFile();
 		StandardMessageManager manager = StandardMessageManager.getInstance();
-		return manager.getStandardMessage();
+		
+		StandardMessage message = manager.getStandardMessage();
+//		MessageFilter flatFilter = new FlatMessageFilter();
+//		message.setFlatFilter(flatFilter);
+		return message;
 	}
 	
 	
@@ -325,7 +331,7 @@ public class SrandardMessageTest {
 		
 		StandardMessageManager manager = StandardMessageManager.getInstance();
 		reader = manager.getReader(messageType);
-
+		
 		reader.parse(message, messageString);
 		
 		logger.debug(">> message=\n" + message);

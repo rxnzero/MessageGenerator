@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import com.dhlee.message.StandardMessage;
 import com.dhlee.message.StandardMessageUtil;
+import com.dhlee.message.filter.MessageFilter;
 import com.dhlee.message.parser.StandardReader;
 import com.dhlee.service.InterfaceMapper;
 
@@ -33,6 +34,7 @@ public class StandardMessageManager {
 	
 	private String LAYOUT_FILE_TYPE = "layout.file.type";
 	private String LAYOUT_FILE_PATH = "layout.file.path";
+	private String LAYOUT_FILTER = "layout.filter.FLAT";
 	private String MAPPER_CLASS = "mapper.class";
 	private String MAPPER_DEFINITION = "mapper.definition";
 	private String READER_PREFIX = "reader.";
@@ -103,6 +105,19 @@ public class StandardMessageManager {
 			String path = config.getProperty(LAYOUT_FILE_PATH);
 			logger.debug("{} : {}", LAYOUT_FILE_PATH, path);
 			standardMessage = StandardMessageUtil.generateMessageFromCCsvFile(path);
+			
+			String flatFilterClass = config.getProperty(LAYOUT_FILTER);
+			logger.debug("{} : {}", LAYOUT_FILTER, flatFilterClass);
+			
+			if(StringUtils.isNoneEmpty(flatFilterClass)) {
+				try {
+					Class cl = Class.forName(flatFilterClass);
+					MessageFilter flatFilter = (MessageFilter)cl.newInstance();				
+					standardMessage.setFlatFilter(flatFilter);	
+				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+					logger.warn("configure {} : {}", LAYOUT_FILTER, flatFilterClass, e);
+				}
+			}
 			
 			String mapperClass = config.getProperty(MAPPER_CLASS);
 			String mapperFilePath = config.getProperty(MAPPER_DEFINITION);

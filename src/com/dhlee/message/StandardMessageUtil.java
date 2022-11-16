@@ -52,7 +52,7 @@ public class StandardMessageUtil {
 //		logger.debug("======================================================");
 		for(int i=0; i< itemList.size(); i++) {
 			StandardItem item = itemList.get(i);
-//			logger.debug("{} : item - {}", i, item);
+			logger.debug("{} : item - {}", i, item);
 			// top level
 			if(item.getLevel() == 0) {
 				message.setName(item.getName());
@@ -66,16 +66,18 @@ public class StandardMessageUtil {
 				// get parent & add
 				int levelDiff = (item.getLevel() - pLevel);
 				if( levelDiff == 0) {
-					// do nothing
+					// do nothing					
 				}
 				else if( levelDiff == 1) {
-					parent = stack.pop();
+					parent = stack.peek();
 					parentPath = stackPath.pop();
+//					logger.debug("<< PEEK = {}", parent.getName());
 				}
 				else if(levelDiff < 0) {
-					for(int p=levelDiff; p<0; p++) {
+					while(item.getLevel() >= parent.getLevel()
+							&& !stack.isEmpty()) {
 						parent = stack.pop();
-						parentPath = stackPath.pop();
+//						logger.debug("<< POP = {}", parent.getName());
 					}
 				}
 				else {
@@ -106,6 +108,7 @@ public class StandardMessageUtil {
 			
 			// if group/array,push to stack, pLevel
 			if(item.getType() > 1) {
+//				logger.debug(">> PUSH = {}", item.getName());
 				stackPath.push( getFullPath(parentPath , item.getName()) );
 				stack.push(item);
 			}

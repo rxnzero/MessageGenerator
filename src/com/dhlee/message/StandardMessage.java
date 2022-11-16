@@ -1,5 +1,7 @@
 package com.dhlee.message;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -7,6 +9,8 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.dhlee.message.filter.MessageFilter;
 
 /**
  * @author elink
@@ -20,6 +24,16 @@ public class StandardMessage extends StandardItem{
 	private String llDataPath = null;
 	private String zzDataPath = null;
 	
+	private MessageFilter flatFilter = null;
+	
+	public MessageFilter getFlatFilter() {
+		return flatFilter;
+	}
+
+	public void setFlatFilter(MessageFilter flatFilter) {
+		this.flatFilter = flatFilter;
+	}
+
 	public String getBizDataPath() {
 		return bizDataPath;
 	}
@@ -245,6 +259,38 @@ public class StandardMessage extends StandardItem{
 		}
 	}
 	
+	public byte[] toByteArray() {
+		return toByteArray(true);
+	}
+	
+	public byte[] toByteArray(boolean runFilter) {
+		if(runFilter && flatFilter != null) {
+			flatFilter.doFilter(this);
+		}
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		Iterator<String> keyIter = null;
+		try {
+			keyIter = childs.keySet().iterator();
+			while(keyIter.hasNext()) {
+				String key = keyIter.next();
+				StandardItem item = childs.get(key);
+				bos.write(item.toByteArray());
+			}
+			return bos.toByteArray();
+		} catch(Exception e) {
+			logger.error("toByteArray failed", e);
+			return new byte[0];
+		}
+		finally {
+			if(bos != null)
+				try {
+					bos.close();
+				} catch (IOException e) {
+					;
+				}
+		}
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -253,7 +299,7 @@ public class StandardMessage extends StandardItem{
 //				+", size=" + size + ", fieldType=" + fieldType +", length=" + length + ", dataType=" + dataType
 //				+ ", refPath=" + refPath + ", refValue=" + refValue
 //				+ ", value=" + value 
-				+ "]");
+				+ ", desc=" + desc + "]");
 		if(bizDataPath != null) sb.append(", bizDataPath=" + bizDataPath);
 		if(llDataPath != null) sb.append(", llDataPath=" + llDataPath);
 		if(zzDataPath != null) sb.append(", zzDataPath=" + zzDataPath);
@@ -267,4 +313,6 @@ public class StandardMessage extends StandardItem{
 		}
 		return sb.toString();
 	}
+	
+	
 }

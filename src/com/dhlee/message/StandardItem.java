@@ -25,7 +25,7 @@ public class StandardItem implements Serializable, Cloneable {
 	// String <-> byte[] charset
 	String encode = "euc-kr";
 	
-	public static int ITEM_COUNT = 10;
+	public static int ITEM_COUNT = 11;
 	String name;
 	int level; // 0 : root  ~ n
 	int type; // 0: Message, 1: Field, 2:Group,  3 : Array, 4 : Field Array, 9 : BIZ DATA	
@@ -36,6 +36,7 @@ public class StandardItem implements Serializable, Cloneable {
 	String refPath;
 	String refValue;
 	String value;
+	String desc = "";
 	
 	byte[] bytesValue = null;
 	
@@ -66,22 +67,33 @@ public class StandardItem implements Serializable, Cloneable {
 //		list = new ArrayList<StandardItem>();
 	}
 	
-	public StandardItem(String name, int level, int type, int size, int fieldType, int length, int dataType, String refPath, String refValue, String value) {
+	public StandardItem(String name, int level, int type, int size, int fieldType, int length, 
+			int dataType, String refPath, String refValue, String value, String desc) {
 		super();
-		initValues(name, level, type, size, fieldType, length, dataType, refPath, refValue, value);
+		initValues(name, level, type, size, fieldType, length, dataType, refPath, refValue, value, desc);
 	}
 	
+	public StandardItem(String name, int level, int type, int size, int length, int dataType, String value, String desc) {
+		super();
+		initValues(name, level, type, size, 0, length, dataType, null, null, value, desc);
+	}
 	public StandardItem(String name, int level, int type, int size, int length, int dataType, String value) {
 		super();
-		initValues(name, level, type, size, 0, length, dataType, null, null, value);
+		initValues(name, level, type, size, 0, length, dataType, null, null, value, null);
+	}
+	
+	public StandardItem(String name, int level, int type, int length, int dataType, String value, String desc) {
+		super();
+		initValues(name, level, type, 1, 0, length, dataType, null, null, value, desc);
 	}
 	
 	public StandardItem(String name, int level, int type, int length, int dataType, String value) {
 		super();
-		initValues(name, level, type, 1, 0, length, dataType, null, null, value);
+		initValues(name, level, type, 1, 0, length, dataType, null, null, value, null);
 	}
 	
-	public void initValues(String name, int level, int type, int size, int fieldType, int length, int dataType, String refPath, String refValue, String value) {
+	public void initValues(String name, int level, int type, int size, int fieldType, int length, 
+			int dataType, String refPath, String refValue, String value, String desc) {
 		this.name = name;
 		this.level = level;
 		this.type = type;
@@ -92,10 +104,11 @@ public class StandardItem implements Serializable, Cloneable {
 		this.refPath = refPath;
 		this.refValue = refValue;
 		setValue(value);
+		if(desc != null) this.desc = desc;
 	}
 	
 	public StandardItem(String[] values) throws Exception {
-		if(values == null || values.length < ITEM_COUNT) {
+		if(values == null || values.length < ITEM_COUNT-1) {
 			throw new Exception("invalid StandardItem defination values : " + (values==null? "":values.length)); 
 		}		
 		this.name = values[0].trim();
@@ -108,6 +121,12 @@ public class StandardItem implements Serializable, Cloneable {
 		this.refPath = values[7].trim();
 		this.refValue = values[8].trim();
 		setValue(values[9]);
+		if(values.length == ITEM_COUNT) {
+			setDesc(values[10].trim());
+		}
+		else {
+			setDesc(values[0].trim());
+		}
 	}
 	
 	public void addItem (StandardItem item) {
@@ -233,6 +252,14 @@ public class StandardItem implements Serializable, Cloneable {
 		this.refValue = refValue;
 	}
 
+	public String getDesc() {
+		return desc;
+	}
+
+	public void setDesc(String desc) {
+		this.desc = desc;
+	}
+	
 	public String getValue() {
 		return value;
 	}
@@ -301,7 +328,8 @@ public class StandardItem implements Serializable, Cloneable {
 		sb.append(getLevelTreeIndent()).append("StandardItem [name=" + name + ", level=" + level 
 				+ ", type=" + type +", size=" + size + ", fieldType=" + fieldType +", length=" + length + ", dataType=" + dataType
 				+ ", refPath=" + refPath + ", refValue=" + refValue
-				+ ", value=" + value + "]");
+				+ ", value=" + value
+				+ ", desc=" + desc + "]");
 		Iterator<String> keyIter = null;;
 		switch(getType())  {
 			case StandardType.MESSAGE :
@@ -347,7 +375,7 @@ public class StandardItem implements Serializable, Cloneable {
 		StringBuilder sb = new StringBuilder();
 		
 		if(level == 0) {
-			sb.append("#name,level,type,size,fieldType,length,dataType,refPath,refValue,value\n");
+			sb.append("#name,level,type,size,fieldType,length,dataType,refPath,refValue,value,desc\n");
 		}
 		sb.append(name);
 		sb.append(",");
@@ -368,6 +396,8 @@ public class StandardItem implements Serializable, Cloneable {
 		sb.append(refValue);
 		sb.append(",");
 		sb.append(value);
+		sb.append(",");
+		sb.append(desc);
 		sb.append("\n");
 		Iterator<String> keyIter = childs.keySet().iterator();
 		while(keyIter.hasNext()) {
