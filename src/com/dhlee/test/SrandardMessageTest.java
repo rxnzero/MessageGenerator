@@ -357,7 +357,8 @@ public class SrandardMessageTest {
 		logger.debug(findItem + " => " +message.findItemValue(findItem));
 		
 		logger.debug(">> Test getter after parsing");
-		findItem = "Array[0].Group[0]";
+//		findItem = "Array[0].Group[0]";
+		findItem = "Array";
 		StandardItem item = message.findItem(findItem);
 		if(item == null) {
 			logger.debug(findItem + " NOT FOUND!");
@@ -368,6 +369,7 @@ public class SrandardMessageTest {
 			logger.debug("toJson=\n" + item.toJson());
 			logger.debug("toXML=\n" + item.toXML());
 			logger.debug("toByteArray=\n[" + new String(item.toByteArray()) + "]" );
+			logger.debug("getBytesDataLength=" + item.getBytesDataLength() );
 		}
 	}
 	

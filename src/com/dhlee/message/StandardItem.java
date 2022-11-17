@@ -746,8 +746,84 @@ public class StandardItem implements Serializable, Cloneable {
 		return sb.toString();
 	}
 	
+	public int getBytesDataLength() {
+		int totalSize = 0;
+		Iterator<String> keyIter = null;
+		try {
+			switch(getType()) {
+				case StandardType.MESSAGE :
+					keyIter = childs.keySet().iterator();
+					while(keyIter.hasNext()) {
+						String key = keyIter.next();
+						StandardItem item = childs.get(key);
+						totalSize +=item.getBytesDataLength();
+					}
+					break;
+				case StandardType.FIELD :
+					totalSize += getLength();
+					break;
+				case StandardType.GROUP :
+					// skip variable group
+					if( getSize() == 0) {
+						break;
+					}
+					keyIter = childs.keySet().iterator();
+					while(keyIter.hasNext()) {
+						String key = keyIter.next();
+						StandardItem item = childs.get(key);				
+						totalSize +=item.getBytesDataLength();
+					}			
+					break;
+				case StandardType.GRID :			
+					for(int p=0; p<list.size(); p++) {					
+						LinkedHashMap<String , StandardItem> group = list.get(p);
+						keyIter = group.keySet().iterator();
+						while(keyIter.hasNext()) {
+							String key = keyIter.next();
+							StandardItem item = group.get(key);
+							totalSize +=item.getBytesDataLength();
+						}												
+					}
+					break;
+				case StandardType.FARRAY :			
+					for(int p=0; p<values.size(); p++) {					
+						totalSize += getLength();												
+					}
+					break;	
+				case StandardType.BIZDATA :							
+					totalSize += getBytesValue().length;
+		            
+					break;	
+				default :
+					break;
+			}		
+			return totalSize;
+		} catch(Exception e) {
+    		logger.error("getBytesDataLength failed", e);
+    		return totalSize;
+    	}
+    	finally {
+    	}
+	}
+	
+	public String toFixedString() {
+		return toFixedString(true);
+	}
+	
+	public String toFixedString(boolean withBizDta) {
+		byte[] bytes = toByteArray(withBizDta);
+		try {
+			return new String(bytes, encode);
+		} catch (UnsupportedEncodingException e) {
+			logger.error("encoding fail, use default.", e);
+			return new String(bytes);
+		}
+	}
 	
 	public byte[] toByteArray() {
+		return toByteArray(true);
+	}
+	public byte[] toByteArray(boolean withBizDta) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		Iterator<String> keyIter = null;
 		try {
@@ -807,12 +883,14 @@ public class StandardItem implements Serializable, Cloneable {
 			            }												
 					}
 					break;	
-				case StandardType.BIZDATA :							
-					if (getValue() == null) {
-		            	bos.write( new byte[getLength()] );	            	
-		            } else {	            	
-		            	bos.write( getBytesValue() );
-		            }
+				case StandardType.BIZDATA :
+					if(withBizDta) {
+						if (getValue() == null) {
+			            	bos.write( new byte[getLength()] );	            	
+			            } else {	            	
+			            	bos.write( getBytesValue() );
+			            }
+					}
 					break;	
 				default :
 					break;

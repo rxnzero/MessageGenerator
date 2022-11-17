@@ -16,7 +16,7 @@ import com.dhlee.message.filter.MessageFilter;
  * @author elink
  *
  */
-public class StandardMessage extends StandardItem{
+public class StandardMessage extends StandardItem {
 	private static final long serialVersionUID = 8250470942348479859L;
 	static Logger logger = LoggerFactory.getLogger(StandardMessage.class);
 	int readPosition = 0;
@@ -288,6 +288,25 @@ public class StandardMessage extends StandardItem{
 				} catch (IOException e) {
 					;
 				}
+		}
+	}
+	
+	public int getBytesDataLength() {
+		Iterator<String> keyIter = null;
+		int totalSize = 0;
+		try {
+			keyIter = childs.keySet().iterator();
+			while(keyIter.hasNext()) {
+				String key = keyIter.next();
+				StandardItem item = childs.get(key);
+				totalSize +=item.getBytesDataLength();
+			}
+			return totalSize;
+		} catch(Exception e) {
+			logger.error("getBytesDataLength failed", e);
+			return totalSize;
+		}
+		finally {			
 		}
 	}
 	
