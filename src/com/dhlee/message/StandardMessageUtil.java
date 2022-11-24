@@ -70,13 +70,14 @@ public class StandardMessageUtil {
 				}
 				else if( levelDiff == 1) {
 					parent = stack.peek();
-					parentPath = stackPath.pop();
+					parentPath = stackPath.peek();
 //					logger.debug("<< PEEK = {}", parent.getName());
 				}
 				else if(levelDiff < 0) {
-					while(item.getLevel() >= parent.getLevel()
+					while(item.getLevel() > parent.getLevel()
 							&& !stack.isEmpty()) {
 						parent = stack.pop();
+						parentPath = stackPath.pop();
 //						logger.debug("<< POP = {}", parent.getName());
 					}
 				}
@@ -108,7 +109,13 @@ public class StandardMessageUtil {
 			
 			// if group/array,push to stack, pLevel
 			if(item.getType() > 1) {
-//				logger.debug(">> PUSH = {}", item.getName());
+				logger.debug(">> PUSH = {}", item.getName());
+				
+				if(parent.getLevel() == item.getLevel()) {
+//					logger.debug(">> POP revious sibling = {}", parent.getName());
+					stack.pop();
+					stackPath.pop();
+				}
 				stackPath.push( getFullPath(parentPath , item.getName()) );
 				stack.push(item);
 			}

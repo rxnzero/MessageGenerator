@@ -6,7 +6,7 @@
 # length;
 # dataType; // 0: String, 1: Number,10: ZZ String, 11: LL Number
 #name                ,level,type,size,fieldType,length,dataType,refPath,refValue,value
-ElinkHeader          ,0    ,0   ,1    ,0       , 0    ,0       ,,,,표준헤더
+#ElinkHeader          ,0    ,0   ,1    ,0       , 0    ,0       ,,,,표준헤더
 Header               ,1    ,2   ,1    ,1       , 0    ,0       ,,,,공통헤더
 StndCicsTrncd        ,2    ,1   ,1    ,1       ,10    ,0       ,,,,트랜코드
 StndIntnlStndTelgmLen,2    ,1   ,1    ,1       ,10    ,11      ,,,0,헤더길이
